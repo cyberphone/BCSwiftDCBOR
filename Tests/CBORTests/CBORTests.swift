@@ -138,6 +138,15 @@ final class CBORTests: XCTestCase {
              "a80a011864022003617a046261610581186406812007f408")
     }
     
+    func testMisorderedMap() {
+        XCTAssertThrowsError(try decodeCBOR(‡"a2026141016142")) {
+            guard case CBORError.MisorderedMapKey = $0 else {
+                XCTFail()
+                return
+            }
+        }
+    }
+    
     func testString() {
         runTest("Hello", #"String("Hello")"#, #""Hello""#, "6548656c6c6f")
     }

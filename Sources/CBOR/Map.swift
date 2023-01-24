@@ -34,6 +34,20 @@ public struct CBORMap: Equatable {
     public mutating func insert<K, V>(_ key: K, _ value: V) where K: IntoCBOR & EncodeCBOR, V: IntoCBOR {
         dict[CBORMapKey(key.encodeCBOR())] = CBORMapValue(key: key.intoCBOR(), value: value.intoCBOR())
     }
+    
+    mutating func insertNext<K, V>(_ key: K, _ value: V) -> Bool where K: IntoCBOR & EncodeCBOR, V: IntoCBOR {
+        guard let lastEntry = dict.last else {
+            self.insert(key, value)
+            return true
+        }
+        let newKey = CBORMapKey(key.encodeCBOR())
+        let entryKey = lastEntry.key
+        guard entryKey < newKey else {
+            return false
+        }
+        self.dict[newKey] = CBORMapValue(key: key.intoCBOR(), value: value.intoCBOR())
+        return true
+    }
 }
 
 extension CBORMap: EncodeCBOR {

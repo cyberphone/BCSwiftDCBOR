@@ -7,6 +7,7 @@ public enum CBORError: LocalizedError, Equatable {
     case NonCanonicalInt
     case InvalidString
     case UnusedData(Int)
+    case MisorderedMapKey
 }
 
 extension ArraySlice where Element == UInt8 {
@@ -173,7 +174,9 @@ func decodeCBORInternal(_ data: ArraySlice<UInt8>) throws -> (cbor: CBOR, len: I
             pos += keyLen
             let (value, valueLen) = try decodeCBORInternal(data.from(pos))
             pos += valueLen
-            map.insert(key, value)
+            guard map.insertNext(key, value) else {
+                throw CBORError.MisorderedMapKey
+            }
         }
         return (map.intoCBOR(), pos)
     case .Tagged:
