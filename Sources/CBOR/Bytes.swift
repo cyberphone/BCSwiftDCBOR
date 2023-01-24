@@ -37,3 +37,9 @@ extension Bytes: CustomStringConvertible {
         data.hex.flanked("h'", "'")
     }
 }
+
+extension Bytes: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        data.hex
+    }
+}

@@ -64,8 +64,55 @@ extension CBOR: Equatable {
         case (CBOR.String(let l), CBOR.String(let r)): return l == r
         case (CBOR.Array(let l), CBOR.Array(let r)): return l == r
         case (CBOR.Map(let l), CBOR.Map(let r)): return l == r
+        case (CBOR.Tagged(let l), CBOR.Tagged(let r)): return l == r
         case (CBOR.Value(let l), CBOR.Value(let r)): return l == r
         default: return false
+        }
+    }
+}
+
+extension CBOR: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .UInt(let x):
+            return x.description
+        case .NInt(let x):
+            return x.description
+        case .Bytes(let x):
+            return x.description
+        case .String(let x):
+            return x.description.flanked("\"")
+        case .Array(let x):
+            return x.map({ $0.description }).joined(separator: ", ").flanked("[", "]")
+        case .Map(let x):
+            return x.description
+        case .Tagged(let x):
+            return x.description
+        case .Value(let x):
+            return x.description
+        }
+    }
+}
+
+extension CBOR: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        switch self {
+        case .UInt(let x):
+            return "UInt(\(x))"
+        case .NInt(let x):
+            return "NInt(\(x))"
+        case .Bytes(let x):
+            return "Bytes(\(x.debugDescription))"
+        case .String(let x):
+            return "String(\(x.flanked("\"")))"
+        case .Array(let x):
+            return "Array(\(x))"
+        case .Map(let x):
+            return "Map(\(x.debugDescription))"
+        case .Tagged(let x):
+            return "Tagged(\(x.tag), \(x.item.debugDescription))"
+        case .Value(let x):
+            return "Value(\(x.debugDescription))"
         }
     }
 }

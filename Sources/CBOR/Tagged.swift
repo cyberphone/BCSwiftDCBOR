@@ -1,12 +1,12 @@
 import Foundation
 
-public struct Tagged {
+public struct Tagged: Equatable {
     public let tag: UInt64
     public let item: CBOR
     
-    public init(tag: UInt64, item: CBOR) {
+    public init<T>(tag: UInt64, item: T) where T: IntoCBOR {
         self.tag = tag
-        self.item = item
+        self.item = item.intoCBOR()
     }
     
     public var name: String {
@@ -26,8 +26,15 @@ extension Tagged: IntoCBOR {
     }
 }
 
+extension Tagged: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        "Tagged(tag: \(name), item: \(item.debugDescription))"
+    }
+}
+
 extension Tagged: CustomStringConvertible {
     public var description: String {
-        "\(name)(\(item))"
+        let a = "\(name)(\(item))"
+        return a
     }
 }

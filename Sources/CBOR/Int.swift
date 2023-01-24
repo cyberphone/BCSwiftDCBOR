@@ -164,3 +164,9 @@ extension Int: IntoCBOR {
         }
     }
 }
+
+extension Int: EncodeCBOR {
+    public func encodeCBOR() -> Data {
+        Int64(self).encodeCBOR()
+    }
+}

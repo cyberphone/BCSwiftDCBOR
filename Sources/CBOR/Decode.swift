@@ -1,11 +1,26 @@
 import Foundation
 import WolfBase
 
-public enum CBORError: LocalizedError {
+public enum CBORError: LocalizedError, Equatable {
     case Underrun
     case BadHeaderValue(UInt8)
     case NonCanonicalInt
     case InvalidString
+    case UnusedData(Int)
+}
+
+extension ArraySlice where Element == UInt8 {
+    func at(_ index: Int) -> UInt8 {
+        self[startIndex + index]
+    }
+    
+    func from(_ index: Int) -> ArraySlice<UInt8> {
+        self[(startIndex + index)...]
+    }
+    
+    func range(_ range: Range<Int>) -> ArraySlice<UInt8> {
+        self[(startIndex + range.lowerBound)..<(startIndex + range.upperBound)]
+    }
 }
 
 func parseHeader(_ header: UInt8) -> (MajorType, UInt8) {
@@ -39,7 +54,7 @@ func parseHeaderVarint(_ data: ArraySlice<UInt8>) throws -> (majorType: MajorTyp
         throw CBORError.Underrun
     }
     
-    let (majorType, headerValue) = parseHeader(data[0])
+    let (majorType, headerValue) = parseHeader(data.at(0))
     let dataRemaining = data.count - 1
     let value: UInt64
     let varIntLen: Int
@@ -51,7 +66,7 @@ func parseHeaderVarint(_ data: ArraySlice<UInt8>) throws -> (majorType: MajorTyp
         guard dataRemaining >= 1 else {
             throw CBORError.Underrun
         }
-        value = UInt64(data[1])
+        value = UInt64(data.at(1))
         guard value >= 24 else {
             throw CBORError.NonCanonicalInt
         }
@@ -61,8 +76,8 @@ func parseHeaderVarint(_ data: ArraySlice<UInt8>) throws -> (majorType: MajorTyp
             throw CBORError.Underrun
         }
         value =
-            UInt64(data[1]) << 8 |
-            UInt64(data[2])
+            UInt64(data.at(1)) << 8 |
+            UInt64(data.at(2))
         guard value > UInt8.max else {
             throw CBORError.NonCanonicalInt
         }
@@ -72,10 +87,10 @@ func parseHeaderVarint(_ data: ArraySlice<UInt8>) throws -> (majorType: MajorTyp
             throw CBORError.Underrun
         }
         value =
-            UInt64(data[1]) << 24 |
-            UInt64(data[2]) << 16 |
-            UInt64(data[3]) << 8 |
-            UInt64(data[4])
+            UInt64(data.at(1)) << 24 |
+            UInt64(data.at(2)) << 16 |
+            UInt64(data.at(3)) << 8 |
+            UInt64(data.at(4))
         guard value > UInt16.max else {
             throw CBORError.NonCanonicalInt
         }
@@ -85,16 +100,16 @@ func parseHeaderVarint(_ data: ArraySlice<UInt8>) throws -> (majorType: MajorTyp
             throw CBORError.Underrun
         }
         let valHi =
-            UInt64(data[1]) << 56 |
-            UInt64(data[2]) << 48 |
-            UInt64(data[3]) << 40 |
-            UInt64(data[4]) << 32
+            UInt64(data.at(1)) << 56 |
+            UInt64(data.at(2)) << 48 |
+            UInt64(data.at(3)) << 40 |
+            UInt64(data.at(4)) << 32
         
         let valLo =
-            UInt64(data[5]) << 24 |
-            UInt64(data[6]) << 16 |
-            UInt64(data[7]) << 8 |
-            UInt64(data[8])
+            UInt64(data.at(5)) << 24 |
+            UInt64(data.at(6)) << 16 |
+            UInt64(data.at(7)) << 8 |
+            UInt64(data.at(8))
         
         value = valHi | valLo
         
@@ -112,7 +127,7 @@ func parseBytes(_ data: ArraySlice<UInt8>, len: Int) throws -> ArraySlice<UInt8>
     guard !data.isEmpty else {
         throw CBORError.Underrun
     }
-    return data[..<len]
+    return data.range(0..<len)
 }
 
 func decodeCBORInternal(_ data: ArraySlice<UInt8>) throws -> (cbor: CBOR, len: Int) {
@@ -131,12 +146,12 @@ func decodeCBORInternal(_ data: ArraySlice<UInt8>) throws -> (cbor: CBOR, len: I
         }
     case .Bytes:
         let dataLen = Int(value)
-        let buf = try parseBytes(data[headerVarIntLen...], len: dataLen)
+        let buf = try parseBytes(data.from(headerVarIntLen), len: dataLen)
         let bytes = Bytes(buf)
         return (bytes.intoCBOR(), headerVarIntLen + dataLen)
     case .String:
         let dataLen = Int(value)
-        let buf = try parseBytes(data[headerVarIntLen...], len: dataLen)
+        let buf = try parseBytes(data.from(headerVarIntLen), len: dataLen)
         guard let string = String(bytes: buf, encoding: .utf8) else {
             throw CBORError.InvalidString
         }
@@ -145,7 +160,7 @@ func decodeCBORInternal(_ data: ArraySlice<UInt8>) throws -> (cbor: CBOR, len: I
         var pos = headerVarIntLen
         var items: [CBOR] = []
         for _ in 0..<value {
-            let (item, itemLen) = try decodeCBORInternal(data[pos...])
+            let (item, itemLen) = try decodeCBORInternal(data.from(pos))
             items.append(item)
             pos += itemLen
         }
@@ -154,15 +169,15 @@ func decodeCBORInternal(_ data: ArraySlice<UInt8>) throws -> (cbor: CBOR, len: I
         var pos = headerVarIntLen
         var map = CBORMap()
         for _ in 0..<value {
-            let (key, keyLen) = try decodeCBORInternal(data[pos...])
+            let (key, keyLen) = try decodeCBORInternal(data.from(pos))
             pos += keyLen
-            let (value, valueLen) = try decodeCBORInternal(data[pos...])
+            let (value, valueLen) = try decodeCBORInternal(data.from(pos))
             pos += valueLen
             map.insert(key, value)
         }
         return (map.intoCBOR(), pos)
     case .Tagged:
-        let (item, itemLen) = try decodeCBORInternal(data[headerVarIntLen...])
+        let (item, itemLen) = try decodeCBORInternal(data.from(headerVarIntLen))
         let tagged = Tagged(tag: value, item: item)
         return (tagged.intoCBOR(), headerVarIntLen + itemLen)
     case .Value:
@@ -171,13 +186,10 @@ func decodeCBORInternal(_ data: ArraySlice<UInt8>) throws -> (cbor: CBOR, len: I
 }
 
 public func decodeCBOR(_ data: Data) throws -> CBOR {
-    try {
-        if let cbor = try data.withContiguousStorageIfAvailable ({ ptr in
-            try decodeCBORInternal(ArraySlice(ptr))
-        }) {
-            return cbor
-        } else {
-            return try decodeCBORInternal(ArraySlice(data))
-        }
-    }().cbor
+    let (cbor, len) = try decodeCBORInternal(ArraySlice(data))
+    let remaining = data.count - len
+    guard remaining == 0 else {
+        throw CBORError.UnusedData(remaining)
+    }
+    return cbor
 }
