@@ -1,16 +1,19 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA256
+
 # Contributor License Agreement
 
 Version 1.0
 
-Name: `$name`
+Name: `Wolf McNally`
 
-E-Mail: `$email`
+E-Mail: `wolf@wolfmcnally.com`
 
 Legal Jurisdiction: Wyoming, United States of America
 
 Project: https://github.com/BlockchainCommons/BCSwiftCBOR
 
-Date: `$date`
+Date: `23 January 2023`
 
 ## Purpose
 
@@ -49,7 +52,19 @@ I promise not to offer contributions that contain or depend on the work of other
 ## Disclaimers
 
 ***As far as the law allows, my contributions come as is, without any warranty or condition.  Other than under [Copyright Guarantee](#copyright-guarantee), [Patent Guarantee](#patent-guarantee), or [Open Source Guarantee](#open-source-guarantee), I will not be liable to anyone for any damages related to my contributions or this contributor license agreement, under any kind of legal claim.***
+-----BEGIN PGP SIGNATURE-----
 
----
-
-To sign this Contributor License Agreement, fill in `$name`, `$email`, and `$date` above. Then sign using GPG using the following command `gpg --armor --clearsign --output ./CLA-signed/CLA.YOURGITHUBNAME.YOURGPGFINGERPRINT.asc CLA.md`, then either submit your signed Contributor License Agreement to this repo as a GPG signed Pull Request or email it to [ChristopherA@BlockchainCommons.com](mailto:ChristopherA@BlockchainCommons.com).
+iQIzBAEBCAAdFiEElDZS7jhEF2DD3DU2S2wvz4lHgK4FAmPPji8ACgkQS2wvz4lH
+gK41gg//eEZnCxEP8FqqHoVk03o3EK+PRzdiPx0PuCiNGra9/m/kEa/olkzhIZO7
+ioGcUXWmON4IRBGWoLOVOhVGJKz0D9qPWhscSFYUJtSxS/KnEVhz9gt+J8PsgOny
+HAqDDGwZJv6eiD7KntwiJxouQAfG2stEgkzX1Chn3x7niHe4lL9kfowvjrDmiEIe
+dZT9CxPnOm0OWRbIGjJ9minX+wk8JCvCrhfSSuMOnEITVQ3UdExyt+84wzgLFJbL
+Sd+AXhDJJguT6ehGSzV5awYaC93N8C2XTYtDcFjRWuKNSCrkljf4HCLoajS2+WCi
+Xqw5p4GRdrYlqFG2jSdEkVSmH6olmfyt19yPjvIU8bqZWbsTEW35yo292QUZcr6c
+tgffdaM4jJorcws7VTCbnGKiWipQh/QoS+HpOU8L0MxXYqSMlkOvSa2j52YPZUCN
+yNd80F046EKpwMfRELpr6DmfEA+9PkA/qbXXMcoOIuXUnuWPZHxE9udQDh3laJWZ
+nDChX7QG2kVmHNU+yv9Fu1MNIwPGbHffo7VtPN2CuXb3HwB/xfB1eSDkOA0YdrRx
+tDGze8wChsZaSHLMQAWYbogVtywKXFomyT3n0tJddraRrs3qHPnOjbMqxaWgh3qh
+Z2SCyp42y5kE2OOM5XVbdSTIuuuSvJBriU6oEzx1BmkyPvMvTvg=
+=Qc9O
+-----END PGP SIGNATURE-----
