@@ -172,4 +172,18 @@ final class CBORTests: XCTestCase {
             }
         }
     }
+    
+    func testEnvelope() {
+        let alice = Tagged(tag: 200, item: Tagged(tag: 24, item: "Alice"))
+        let knows = Tagged(tag: 200, item: Tagged(tag: 24, item: "knows"))
+        let bob = Tagged(tag: 200, item: Tagged(tag: 24, item: "Bob"))
+        let knowsBob = Tagged(tag: 200, item: Tagged(tag: 221, item: [knows, bob]))
+        let envelope = Tagged(tag: 200, item: [alice, knowsBob])
+        let cbor = envelope.intoCBOR()
+        XCTAssertEqual(cbor.description, #"200([200(24("Alice")), 200(221([200(24("knows")), 200(24("Bob"))]))])"#)
+        let bytes = cbor.encode()
+        XCTAssertEqual(bytes, ‡"d8c882d8c8d81865416c696365d8c8d8dd82d8c8d818656b6e6f7773d8c8d81863426f62")
+        let decodedCBOR = try! decodeCBOR(bytes)
+        XCTAssertEqual(cbor, decodedCBOR)
+    }
 }
