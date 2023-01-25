@@ -1,7 +1,7 @@
 import Foundation
 
 extension String: CBOREncodable {
-    public func intoCBOR() -> CBOR {
+    public var cbor: CBOR {
         .String(self)
     }
     

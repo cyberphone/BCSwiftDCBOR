@@ -1,8 +1,8 @@
 import Foundation
 
 extension Array: CBOREncodable where Element: CBOREncodable {
-    public func intoCBOR() -> CBOR {
-        .Array(self.map { $0.intoCBOR() })
+    public var cbor: CBOR {
+        .Array(self.map { $0.cbor })
     }
 
     public func encodeCBOR() -> Data {

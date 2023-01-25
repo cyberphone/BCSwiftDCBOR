@@ -4,10 +4,10 @@ import CBOR
 
 final class CBORTests: XCTestCase {
     func runTest<T>(_ t: T, _ expectedDebugDescription: String, _ expectedDescription: String, _ expectedData: String) where T: CBOREncodable {
-        let cbor = t.intoCBOR()
+        let cbor = t.cbor
         XCTAssertEqual(cbor.debugDescription, expectedDebugDescription)
         XCTAssertEqual(cbor.description, expectedDescription)
-        let data = cbor.encode()
+        let data = cbor.encodeCBOR()
         XCTAssertEqual(data, expectedData.hexData!)
         let decodedCBOR = try! decodeCBOR(data)
         XCTAssertEqual(cbor, decodedCBOR)
@@ -179,9 +179,9 @@ final class CBORTests: XCTestCase {
         let bob = Tagged(tag: 200, item: Tagged(tag: 24, item: "Bob"))
         let knowsBob = Tagged(tag: 200, item: Tagged(tag: 221, item: [knows, bob]))
         let envelope = Tagged(tag: 200, item: [alice, knowsBob])
-        let cbor = envelope.intoCBOR()
+        let cbor = envelope.cbor
         XCTAssertEqual(cbor.description, #"200([200(24("Alice")), 200(221([200(24("knows")), 200(24("Bob"))]))])"#)
-        let bytes = cbor.encode()
+        let bytes = cbor.encodeCBOR()
         XCTAssertEqual(bytes, ‡"d8c882d8c8d81865416c696365d8c8d8dd82d8c8d818656b6e6f7773d8c8d81863426f62")
         let decodedCBOR = try! decodeCBOR(bytes)
         XCTAssertEqual(cbor, decodedCBOR)

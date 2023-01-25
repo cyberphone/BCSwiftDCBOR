@@ -1,7 +1,7 @@
 import Foundation
 
 extension UInt8: CBOREncodable {
-    public func intoCBOR() -> CBOR {
+    public var cbor: CBOR {
         .UInt(UInt64(self))
     }
     
@@ -11,7 +11,7 @@ extension UInt8: CBOREncodable {
 }
 
 extension UInt16: CBOREncodable {
-    public func intoCBOR() -> CBOR {
+    public var cbor: CBOR {
         .UInt(UInt64(self))
     }
     
@@ -21,7 +21,7 @@ extension UInt16: CBOREncodable {
 }
 
 extension UInt32: CBOREncodable {
-    public func intoCBOR() -> CBOR {
+    public var cbor: CBOR {
         .UInt(UInt64(self))
     }
 
@@ -31,7 +31,7 @@ extension UInt32: CBOREncodable {
 }
 
 extension UInt64: CBOREncodable {
-    public func intoCBOR() -> CBOR {
+    public var cbor: CBOR {
         .UInt(UInt64(self))
     }
     
@@ -41,7 +41,7 @@ extension UInt64: CBOREncodable {
 }
 
 extension UInt: CBOREncodable {
-    public func intoCBOR() -> CBOR {
+    public var cbor: CBOR {
         .UInt(UInt64(self))
     }
     
@@ -51,7 +51,7 @@ extension UInt: CBOREncodable {
 }
 
 extension Int8: CBOREncodable {
-    public func intoCBOR() -> CBOR {
+    public var cbor: CBOR {
         if self < 0 {
             return .NInt(Int64(self))
         } else {
@@ -72,7 +72,7 @@ extension Int8: CBOREncodable {
 }
 
 extension Int16: CBOREncodable {
-    public func intoCBOR() -> CBOR {
+    public var cbor: CBOR {
         if self < 0 {
             return .NInt(Int64(self))
         } else {
@@ -93,7 +93,7 @@ extension Int16: CBOREncodable {
 }
 
 extension Int32: CBOREncodable {
-    public func intoCBOR() -> CBOR {
+    public var cbor: CBOR {
         if self < 0 {
             return .NInt(Int64(self))
         } else {
@@ -114,7 +114,7 @@ extension Int32: CBOREncodable {
 }
 
 extension Int64: CBOREncodable {
-    public func intoCBOR() -> CBOR {
+    public var cbor: CBOR {
         if self < 0 {
             return .NInt(Int64(self))
         } else {
@@ -138,7 +138,7 @@ extension Int64: CBOREncodable {
 }
 
 extension Int: CBOREncodable {
-    public func intoCBOR() -> CBOR {
+    public var cbor: CBOR {
         if self < 0 {
             return .NInt(Int64(self))
         } else {

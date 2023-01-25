@@ -13,22 +13,16 @@ public indirect enum CBOR {
 }
 
 public protocol CBOREncodable {
-    func intoCBOR() -> CBOR
+    var cbor: CBOR { get }
     func encodeCBOR() -> Data
 }
 
 extension CBOR: CBOREncodable {
-    public func intoCBOR() -> CBOR {
+    public var cbor: CBOR {
         self
     }
 
     public func encodeCBOR() -> Data {
-        self.encode()
-    }
-}
-
-public extension CBOR {
-    func encode() -> Data {
         switch self {
         case .UInt(let x):
             return x.encodeCBOR()

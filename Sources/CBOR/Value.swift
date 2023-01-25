@@ -8,13 +8,13 @@ public struct Value: Equatable {
     }
 }
 
-let cborFalse = Value(20).intoCBOR()
-let cborTrue = Value(21).intoCBOR()
-let cborFalseEncoded = cborFalse.encode()
-let cborTrueEncoded = cborTrue.encode()
+let cborFalse = Value(20).cbor
+let cborTrue = Value(21).cbor
+let cborFalseEncoded = cborFalse.encodeCBOR()
+let cborTrueEncoded = cborTrue.encodeCBOR()
 
 extension Bool: CBOREncodable {
-    public func intoCBOR() -> CBOR {
+    public var cbor: CBOR {
         switch self {
         case false:
             return cborFalse
@@ -34,7 +34,7 @@ extension Bool: CBOREncodable {
 }
 
 extension Value: CBOREncodable {
-    public func intoCBOR() -> CBOR {
+    public var cbor: CBOR {
         .Value(self)
     }
     

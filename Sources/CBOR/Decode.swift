@@ -149,14 +149,14 @@ func decodeCBORInternal(_ data: ArraySlice<UInt8>) throws -> (cbor: CBOR, len: I
         let dataLen = Int(value)
         let buf = try parseBytes(data.from(headerVarIntLen), len: dataLen)
         let bytes = Bytes(buf)
-        return (bytes.intoCBOR(), headerVarIntLen + dataLen)
+        return (bytes.cbor, headerVarIntLen + dataLen)
     case .String:
         let dataLen = Int(value)
         let buf = try parseBytes(data.from(headerVarIntLen), len: dataLen)
         guard let string = String(bytes: buf, encoding: .utf8) else {
             throw CBORError.InvalidString
         }
-        return (string.intoCBOR(), headerVarIntLen + dataLen)
+        return (string.cbor, headerVarIntLen + dataLen)
     case .Array:
         var pos = headerVarIntLen
         var items: [CBOR] = []
@@ -165,7 +165,7 @@ func decodeCBORInternal(_ data: ArraySlice<UInt8>) throws -> (cbor: CBOR, len: I
             items.append(item)
             pos += itemLen
         }
-        return (items.intoCBOR(), pos)
+        return (items.cbor, pos)
     case .Map:
         var pos = headerVarIntLen
         var map = CBORMap()
@@ -178,13 +178,13 @@ func decodeCBORInternal(_ data: ArraySlice<UInt8>) throws -> (cbor: CBOR, len: I
                 throw CBORError.MisorderedMapKey
             }
         }
-        return (map.intoCBOR(), pos)
+        return (map.cbor, pos)
     case .Tagged:
         let (item, itemLen) = try decodeCBORInternal(data.from(headerVarIntLen))
         let tagged = Tagged(tag: value, item: item)
-        return (tagged.intoCBOR(), headerVarIntLen + itemLen)
+        return (tagged.cbor, headerVarIntLen + itemLen)
     case .Value:
-        return (Value(value).intoCBOR(), headerVarIntLen)
+        return (Value(value).cbor, headerVarIntLen)
     }
 }
 

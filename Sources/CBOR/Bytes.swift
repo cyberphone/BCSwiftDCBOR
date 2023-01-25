@@ -21,7 +21,7 @@ public struct Bytes: Equatable {
 }
 
 extension Bytes: CBOREncodable {
-    public func intoCBOR() -> CBOR {
+    public var cbor: CBOR {
         .Bytes(self)
     }
     
