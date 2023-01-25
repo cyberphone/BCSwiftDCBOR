@@ -14,15 +14,13 @@ public struct Tagged: Equatable {
     }
 }
 
-extension Tagged: EncodeCBOR {
-    public func encodeCBOR() -> Data {
-        tag.encodeVarInt(.Tagged) + item.encodeCBOR()
-    }
-}
-
 extension Tagged: CBOREncodable {
     public func intoCBOR() -> CBOR {
         .Tagged(self)
+    }
+    
+    public func encodeCBOR() -> Data {
+        tag.encodeVarInt(.Tagged) + item.encodeCBOR()
     }
 }
 

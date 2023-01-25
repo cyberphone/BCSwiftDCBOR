@@ -13,7 +13,16 @@ let cborTrue = Value(21).intoCBOR()
 let cborFalseEncoded = cborFalse.encode()
 let cborTrueEncoded = cborTrue.encode()
 
-extension Bool: EncodeCBOR {
+extension Bool: CBOREncodable {
+    public func intoCBOR() -> CBOR {
+        switch self {
+        case false:
+            return cborFalse
+        case true:
+            return cborTrue
+        }
+    }
+    
     public func encodeCBOR() -> Data {
         switch self {
         case false:
@@ -24,26 +33,13 @@ extension Bool: EncodeCBOR {
     }
 }
 
-extension Bool: CBOREncodable {
-    public func intoCBOR() -> CBOR {
-        switch self {
-        case false:
-            return cborFalse
-        case true:
-            return cborTrue
-        }
-    }
-}
-
-extension Value: EncodeCBOR {
-    public func encodeCBOR() -> Data {
-        n.encodeVarInt(.Value)
-    }
-}
-
 extension Value: CBOREncodable {
     public func intoCBOR() -> CBOR {
         .Value(self)
+    }
+    
+    public func encodeCBOR() -> Data {
+        n.encodeVarInt(.Value)
     }
 }
 

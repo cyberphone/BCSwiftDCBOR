@@ -20,15 +20,13 @@ public struct Bytes: Equatable {
     }
 }
 
-extension Bytes: EncodeCBOR {
-    public func encodeCBOR() -> Data {
-        data.count.encodeVarInt(.Bytes) + data
-    }
-}
-
 extension Bytes: CBOREncodable {
     public func intoCBOR() -> CBOR {
         .Bytes(self)
+    }
+    
+    public func encodeCBOR() -> Data {
+        data.count.encodeVarInt(.Bytes) + data
     }
 }
 
