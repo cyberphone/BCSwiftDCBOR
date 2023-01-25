@@ -4,7 +4,7 @@ public struct Tagged: Equatable {
     public let tag: UInt64
     public let item: CBOR
     
-    public init<T>(tag: UInt64, item: T) where T: IntoCBOR {
+    public init<T>(tag: UInt64, item: T) where T: CBOREncodable {
         self.tag = tag
         self.item = item.intoCBOR()
     }
@@ -20,7 +20,7 @@ extension Tagged: EncodeCBOR {
     }
 }
 
-extension Tagged: IntoCBOR {
+extension Tagged: CBOREncodable {
     public func intoCBOR() -> CBOR {
         .Tagged(self)
     }

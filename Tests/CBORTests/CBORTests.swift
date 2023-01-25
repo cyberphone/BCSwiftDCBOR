@@ -3,7 +3,7 @@ import WolfBase
 import CBOR
 
 final class CBORTests: XCTestCase {
-    func runTest<T>(_ t: T, _ expectedDebugDescription: String, _ expectedDescription: String, _ expectedData: String) where T: IntoCBOR {
+    func runTest<T>(_ t: T, _ expectedDebugDescription: String, _ expectedDescription: String, _ expectedData: String) where T: CBOREncodable {
         let cbor = t.intoCBOR()
         XCTAssertEqual(cbor.debugDescription, expectedDebugDescription)
         XCTAssertEqual(cbor.description, expectedDescription)

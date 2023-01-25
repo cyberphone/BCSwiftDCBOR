@@ -1,6 +1,6 @@
 import Foundation
 
-public enum MajorType: Int {
+enum MajorType: Int {
     case UInt
     case NInt
     case Bytes
@@ -15,12 +15,12 @@ func typeBits(_ t: MajorType) -> UInt8 {
     UInt8(t.rawValue << 5)
 }
 
-public protocol EncodeVarInt {
+protocol EncodeVarInt {
     func encodeVarInt(_ majorType: MajorType) -> Data
 }
 
 extension UInt8: EncodeVarInt {
-    public func encodeVarInt(_ majorType: MajorType) -> Data {
+    func encodeVarInt(_ majorType: MajorType) -> Data {
         if self <= 23 {
             return Data([self | typeBits(majorType)])
         } else {
@@ -33,7 +33,7 @@ extension UInt8: EncodeVarInt {
 }
 
 extension UInt16: EncodeVarInt {
-    public func encodeVarInt(_ majorType: MajorType) -> Data {
+    func encodeVarInt(_ majorType: MajorType) -> Data {
         if self <= UInt8.max {
             return UInt8(self).encodeVarInt(majorType)
         } else {
@@ -46,7 +46,7 @@ extension UInt16: EncodeVarInt {
 }
 
 extension UInt32: EncodeVarInt {
-    public func encodeVarInt(_ majorType: MajorType) -> Data {
+    func encodeVarInt(_ majorType: MajorType) -> Data {
         if self <= UInt16.max {
             return UInt16(self).encodeVarInt(majorType)
         } else {
@@ -60,7 +60,7 @@ extension UInt32: EncodeVarInt {
 }
 
 extension UInt64: EncodeVarInt {
-    public func encodeVarInt(_ majorType: MajorType) -> Data {
+    func encodeVarInt(_ majorType: MajorType) -> Data {
         if self <= UInt32.max {
             return UInt32(self).encodeVarInt(majorType)
         } else {
@@ -76,14 +76,14 @@ extension UInt64: EncodeVarInt {
 }
 
 extension UInt: EncodeVarInt {
-    public func encodeVarInt(_ majorType: MajorType) -> Data {
+    func encodeVarInt(_ majorType: MajorType) -> Data {
         UInt64(self).encodeVarInt(majorType)
     }
 }
 
 
 extension Int: EncodeVarInt {
-    public func encodeVarInt(_ majorType: MajorType) -> Data {
+    func encodeVarInt(_ majorType: MajorType) -> Data {
         UInt64(self).encodeVarInt(majorType)
     }
 }

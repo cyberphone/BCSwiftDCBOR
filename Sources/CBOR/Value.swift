@@ -24,7 +24,7 @@ extension Bool: EncodeCBOR {
     }
 }
 
-extension Bool: IntoCBOR {
+extension Bool: CBOREncodable {
     public func intoCBOR() -> CBOR {
         switch self {
         case false:
@@ -41,7 +41,7 @@ extension Value: EncodeCBOR {
     }
 }
 
-extension Value: IntoCBOR {
+extension Value: CBOREncodable {
     public func intoCBOR() -> CBOR {
         .Value(self)
     }

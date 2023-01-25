@@ -10,7 +10,7 @@ extension Array: EncodeCBOR where Element: EncodeCBOR {
     }
 }
 
-extension Array: IntoCBOR where Element: IntoCBOR {
+extension Array: CBOREncodable where Element: CBOREncodable {
     public func intoCBOR() -> CBOR {
         .Array(self.map { $0.intoCBOR() })
     }

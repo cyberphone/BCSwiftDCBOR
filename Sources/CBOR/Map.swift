@@ -31,11 +31,11 @@ public struct CBORMap: Equatable {
         self.dict = .init()
     }
     
-    public mutating func insert<K, V>(_ key: K, _ value: V) where K: IntoCBOR & EncodeCBOR, V: IntoCBOR {
+    public mutating func insert<K, V>(_ key: K, _ value: V) where K: CBOREncodable & EncodeCBOR, V: CBOREncodable {
         dict[CBORMapKey(key.encodeCBOR())] = CBORMapValue(key: key.intoCBOR(), value: value.intoCBOR())
     }
     
-    mutating func insertNext<K, V>(_ key: K, _ value: V) -> Bool where K: IntoCBOR & EncodeCBOR, V: IntoCBOR {
+    mutating func insertNext<K, V>(_ key: K, _ value: V) -> Bool where K: CBOREncodable & EncodeCBOR, V: CBOREncodable {
         guard let lastEntry = dict.last else {
             self.insert(key, value)
             return true
@@ -64,7 +64,7 @@ extension CBORMap: EncodeCBOR {
     }
 }
 
-extension CBORMap: IntoCBOR {
+extension CBORMap: CBOREncodable {
     public func intoCBOR() -> CBOR {
         .Map(self)
     }

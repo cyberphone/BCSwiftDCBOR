@@ -6,7 +6,7 @@ extension UInt8: EncodeCBOR {
     }
 }
 
-extension UInt8: IntoCBOR {
+extension UInt8: CBOREncodable {
     public func intoCBOR() -> CBOR {
         .UInt(UInt64(self))
     }
@@ -18,7 +18,7 @@ extension UInt16: EncodeCBOR {
     }
 }
 
-extension UInt16: IntoCBOR {
+extension UInt16: CBOREncodable {
     public func intoCBOR() -> CBOR {
         .UInt(UInt64(self))
     }
@@ -30,7 +30,7 @@ extension UInt32: EncodeCBOR {
     }
 }
 
-extension UInt32: IntoCBOR {
+extension UInt32: CBOREncodable {
     public func intoCBOR() -> CBOR {
         .UInt(UInt64(self))
     }
@@ -42,7 +42,7 @@ extension UInt64: EncodeCBOR {
     }
 }
 
-extension UInt64: IntoCBOR {
+extension UInt64: CBOREncodable {
     public func intoCBOR() -> CBOR {
         .UInt(UInt64(self))
     }
@@ -54,7 +54,7 @@ extension UInt: EncodeCBOR {
     }
 }
 
-extension UInt: IntoCBOR {
+extension UInt: CBOREncodable {
     public func intoCBOR() -> CBOR {
         .UInt(UInt64(self))
     }
@@ -73,7 +73,7 @@ extension Int8: EncodeCBOR {
     }
 }
 
-extension Int8: IntoCBOR {
+extension Int8: CBOREncodable {
     public func intoCBOR() -> CBOR {
         if self < 0 {
             return .NInt(Int64(self))
@@ -96,7 +96,7 @@ extension Int16: EncodeCBOR {
     }
 }
 
-extension Int16: IntoCBOR {
+extension Int16: CBOREncodable {
     public func intoCBOR() -> CBOR {
         if self < 0 {
             return .NInt(Int64(self))
@@ -119,7 +119,7 @@ extension Int32: EncodeCBOR {
     }
 }
 
-extension Int32: IntoCBOR {
+extension Int32: CBOREncodable {
     public func intoCBOR() -> CBOR {
         if self < 0 {
             return .NInt(Int64(self))
@@ -145,7 +145,7 @@ extension Int64: EncodeCBOR {
     }
 }
 
-extension Int64: IntoCBOR {
+extension Int64: CBOREncodable {
     public func intoCBOR() -> CBOR {
         if self < 0 {
             return .NInt(Int64(self))
@@ -155,7 +155,7 @@ extension Int64: IntoCBOR {
     }
 }
 
-extension Int: IntoCBOR {
+extension Int: CBOREncodable {
     public func intoCBOR() -> CBOR {
         if self < 0 {
             return .NInt(Int64(self))

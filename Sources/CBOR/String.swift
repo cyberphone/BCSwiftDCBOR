@@ -6,7 +6,7 @@ extension String: EncodeCBOR {
     }
 }
 
-extension String: IntoCBOR {
+extension String: CBOREncodable {
     public func intoCBOR() -> CBOR {
         .String(self)
     }

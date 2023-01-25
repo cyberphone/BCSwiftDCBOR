@@ -26,7 +26,7 @@ extension Bytes: EncodeCBOR {
     }
 }
 
-extension Bytes: IntoCBOR {
+extension Bytes: CBOREncodable {
     public func intoCBOR() -> CBOR {
         .Bytes(self)
     }
