@@ -1,19 +1,50 @@
 import Foundation
 import OrderedCollections
 
+/// A symbolic representation of CBOR data.
 public indirect enum CBOR {
+    /// Unsigned integer (major type 0).
     case UInt(UInt64)
+    /// Negative integer (major type 1).
     case NInt(Int64)
+    /// Byte string (major type 2).
     case Bytes(Bytes)
+    /// UTF-8 string (major type 3).
     case String(String)
+    /// Array (major type 4).
     case Array([CBOR])
-    case Map(CBORMap)
+    /// Map (major type 5).
+    case Map(Map)
+    /// Tagged value (major type 6).
     case Tagged(Tagged)
+    /// Simple value (majory type 7).
     case Value(Value)
 }
 
+/// A value that can be encoded as CBOR.
+///
+/// ## Conforming Native Types
+///
+/// In addition to types defined in this package like ``Bytes``, ``Map``, ``Tagged``, ``Value``, the following
+/// native types also conform to ``CBOREncodable``:
+///
+/// * `UInt8`
+/// * `UInt16`
+/// * `UInt32`
+/// * `UInt64`
+/// * `UInt`
+/// * `Int8`
+/// * `Int16`
+/// * `Int32`
+/// * `Int64`
+/// * `Int`
+/// * `Array where Element: CBOREncodable`
+/// * `String`
+/// * `Bool`
 public protocol CBOREncodable {
+    /// Returns the value in CBOR symbolic representation.
     var cbor: CBOR { get }
+    /// Returns the value in CBOR binary representation.
     func encodeCBOR() -> Data
 }
 
@@ -27,6 +58,7 @@ extension CBOR: CBOREncodable {
         case .UInt(let x):
             return x.encodeCBOR()
         case .NInt(let x):
+            precondition(x < 0)
             return x.encodeCBOR()
         case .Bytes(let x):
             return x.encodeCBOR()

@@ -1,10 +1,18 @@
 import Foundation
 
+/// A CBOR simple value.
 public struct Value: Equatable {
-    let n: UInt64
+    /// The raw value.
+    let rawValue: UInt64
     
+    /// Creates a new CBOR “simple” value.
     public init(_ n: UInt64) {
-        self.n = n
+        self.rawValue = n
+    }
+    
+    /// Returns the known name of the value, if it has been assigned one.
+    var name: String {
+        debugDescription
     }
 }
 
@@ -39,32 +47,32 @@ extension Value: CBOREncodable {
     }
     
     public func encodeCBOR() -> Data {
-        n.encodeVarInt(.Value)
+        rawValue.encodeVarInt(.Value)
     }
 }
 
 extension Value: CustomDebugStringConvertible {
     public var debugDescription: String {
-        switch n {
+        switch rawValue {
         case 20:
             return "false"
         case 21:
             return "true"
         default:
-            return String(n)
+            return String(rawValue)
         }
     }
 }
 
 extension Value: CustomStringConvertible {
     public var description: String {
-        switch n {
+        switch rawValue {
         case 20:
             return "false"
         case 21:
             return "true"
         default:
-            return "simple(\(n))"
+            return "simple(\(rawValue))"
         }
     }
 }

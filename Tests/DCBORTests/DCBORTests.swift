@@ -123,7 +123,7 @@ final class DCBORTests: XCTestCase {
     }
     
     func testMap() {
-        var map = CBORMap()
+        var map = Map()
         map.insert(-1, 3)
         map.insert([-1], 7)
         map.insert("z", 4)
@@ -140,7 +140,7 @@ final class DCBORTests: XCTestCase {
     
     func testMisorderedMap() {
         XCTAssertThrowsError(try decodeCBOR(‡"a2026141016142")) {
-            guard case CBORError.MisorderedMapKey = $0 else {
+            guard case DecodeError.MisorderedMapKey = $0 else {
                 XCTFail()
                 return
             }
@@ -164,7 +164,7 @@ final class DCBORTests: XCTestCase {
     func testUnusedData() {
         XCTAssertThrowsError(try decodeCBOR(‡"0001")) {
             guard
-                case CBORError.UnusedData(let remaining) = $0,
+                case DecodeError.UnusedData(let remaining) = $0,
                 remaining == 1
             else {
                 XCTFail()
