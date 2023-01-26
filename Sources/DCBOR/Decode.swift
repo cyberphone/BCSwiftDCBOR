@@ -167,7 +167,7 @@ func decodeCBORInternal(_ data: ArraySlice<UInt8>) throws -> (cbor: CBOR, len: I
     case .Bytes:
         let dataLen = Int(value)
         let buf = try parseBytes(data.from(headerVarIntLen), len: dataLen)
-        let bytes = Bytes(buf)
+        let bytes = Data(buf)
         return (bytes.cbor, headerVarIntLen + dataLen)
     case .String:
         let dataLen = Int(value)

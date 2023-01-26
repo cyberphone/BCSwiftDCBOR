@@ -8,7 +8,7 @@ public indirect enum CBOR {
     /// Negative integer (major type 1).
     case NInt(Int64)
     /// Byte string (major type 2).
-    case Bytes(Bytes)
+    case Bytes(Data)
     /// UTF-8 string (major type 3).
     case String(String)
     /// Array (major type 4).
@@ -41,6 +41,7 @@ public indirect enum CBOR {
 /// * `Array where Element: CBOREncodable`
 /// * `String`
 /// * `Bool`
+/// * `Data`
 public protocol CBOREncodable {
     /// Returns the value in CBOR symbolic representation.
     var cbor: CBOR { get }
@@ -100,7 +101,7 @@ extension CBOR: CustomStringConvertible {
         case .NInt(let x):
             return x.description
         case .Bytes(let x):
-            return x.description
+            return x.hex.flanked("h'", "'")
         case .String(let x):
             return x.description.flanked("\"")
         case .Array(let x):
@@ -123,7 +124,7 @@ extension CBOR: CustomDebugStringConvertible {
         case .NInt(let x):
             return "NInt(\(x))"
         case .Bytes(let x):
-            return "Bytes(\(x.debugDescription))"
+            return "Bytes(\(x.hex))"
         case .String(let x):
             return "String(\(x.flanked("\"")))"
         case .Array(let x):

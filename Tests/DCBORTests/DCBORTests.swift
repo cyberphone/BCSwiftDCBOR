@@ -109,9 +109,9 @@ final class DCBORTests: XCTestCase {
     }
 
     func testBytes() {
-        runTest(Bytes(‡"112233"), "Bytes(112233)", "h'112233'", "43112233")
+        runTest(‡"112233", "Bytes(112233)", "h'112233'", "43112233")
         runTest(
-            Bytes(‡"c0a7da14e5847c526244f7e083d26fe33f86d2313ad2b77164233444423a50a7"),
+            ‡"c0a7da14e5847c526244f7e083d26fe33f86d2313ad2b77164233444423a50a7",
             "Bytes(c0a7da14e5847c526244f7e083d26fe33f86d2313ad2b77164233444423a50a7)",
             "h'c0a7da14e5847c526244f7e083d26fe33f86d2313ad2b77164233444423a50a7'",
             "5820c0a7da14e5847c526244f7e083d26fe33f86d2313ad2b77164233444423a50a7")
