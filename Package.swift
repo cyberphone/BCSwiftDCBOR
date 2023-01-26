@@ -2,11 +2,11 @@
 import PackageDescription
 
 let package = Package(
-    name: "CBOR",
+    name: "DCBOR",
     products: [
         .library(
-            name: "CBOR",
-            targets: ["CBOR"]),
+            name: "DCBOR",
+            targets: ["DCBOR"]),
     ],
     dependencies: [
         .package(url: "https://github.com/wolfmcnally/swift-collections", .upToNextMajor(from: "1.1.0")),
@@ -14,13 +14,13 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "CBOR",
+            name: "DCBOR",
             dependencies: [
                 "WolfBase",
                 .product(name: "Collections", package: "swift-collections"),
             ]),
         .testTarget(
-            name: "CBORTests",
-            dependencies: ["CBOR"]),
+            name: "DCBORTests",
+            dependencies: ["DCBOR"]),
     ]
 )

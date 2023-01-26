@@ -1,10 +1,10 @@
-# Blockchain Commons Deterministic CBOR Codec
+# Blockchain Commons Deterministic CBOR ("DCBOR") Codec
 
 <!--Guidelines: https://github.com/BlockchainCommons/secure-template/wiki -->
 
 ### _by Wolf McNally_
 
-BCSwiftCBOR is a pure Swift [CBOR](https://cbor.io) codec that focuses on writing and parsing "deterministic" CBOR per [§4.2 of RFC-8949](https://www.rfc-editor.org/rfc/rfc8949.html#name-deterministically-encoded-c). It does not support parts of the spec forbidden by deterministic CBOR (such as indefinite length arrays and maps). It also does not currently support encoding or decoding floating point values. It is strict in both what it writes and reads: in particular it will throw decoding errors if variable-length integers are not encoded in their minimal form, or CBOR map keys are not in lexicographic order, or there is extra data past the end of the decoded CBOR item.
+BCSwiftDCBOR is a pure Swift [CBOR](https://cbor.io) codec that focuses on writing and parsing "deterministic" CBOR per [§4.2 of RFC-8949](https://www.rfc-editor.org/rfc/rfc8949.html#name-deterministically-encoded-c). It does not support parts of the spec forbidden by deterministic CBOR (such as indefinite length arrays and maps). It also does not currently support encoding or decoding floating point values. It is strict in both what it writes and reads: in particular it will throw decoding errors if variable-length integers are not encoded in their minimal form, or CBOR map keys are not in lexicographic order, or there is extra data past the end of the decoded CBOR item.
 
 ## Installation Instructions
 
@@ -12,7 +12,7 @@ Add to your project like any Swift package.
 
 ## Gordian Principles
 
-BCSwiftCBOR is a reference implementation meant to display the [Gordian Principles](https://github.com/BlockchainCommons/Gordian#gordian-principles), which are philosophical and technical underpinnings to Blockchain Commons' Gordian technology. This includes:
+BCSwiftDCBOR is a reference implementation meant to display the [Gordian Principles](https://github.com/BlockchainCommons/Gordian#gordian-principles), which are philosophical and technical underpinnings to Blockchain Commons' Gordian technology. This includes:
 
 * **Independence.** `how does it demonstrate independence`
 * **Privacy.** `how does it demonstrate privacy`
@@ -25,7 +25,7 @@ Blockchain Commons apps do not phone home and do not run ads. Some are available
 
 ## Status - Alpha
 
-BCSwiftCBOR is currently under active development and in the alpha testing phase. It should not be used for production tasks until it has had further testing and auditing. See [Blockchain Commons' Development Phases](https://github.com/BlockchainCommons/Community/blob/master/release-path.md).
+BCSwiftDCBOR is currently under active development and in the alpha testing phase. It should not be used for production tasks until it has had further testing and auditing. See [Blockchain Commons' Development Phases](https://github.com/BlockchainCommons/Community/blob/master/release-path.md).
 
 ### Version History
 
@@ -45,7 +45,7 @@ This table below also establishes provenance (repository of origin, permalink, a
 
 ### Dependencies
 
-To build BCSwiftCBOR you'll need to use the following tools:
+To build BCSwiftDCBOR you'll need to use the following tools:
 
 - autotools - Gnu Build System from Free Software Foundation ([intro](https://www.gnu.org/software/automake/manual/html_node/Autotools-Introduction.html)).
 
@@ -55,7 +55,7 @@ Other prerequisites include:
 
 ### Libraries
 
-The following external libraries are used with BCSwiftCBOR:
+The following external libraries are used with BCSwiftDCBOR:
 
 - [community/repo-name](https://github.com/community/repo-name) — What the library does (use OR fork [version] OR include [version]).
 
@@ -63,7 +63,7 @@ Libraries may be marked as `use` (the current version of the library is used), `
 
 ### Derived from ...
 
-This BCSwiftCBOR project is either derived from or was inspired by:
+This BCSwiftDCBOR project is either derived from or was inspired by:
 
 - [community/repo-name/](https://github.com/community/repo-name) — Repo that does what, by [developer](https://github.com/developer)  or from  [community](https://community.com).
 
@@ -71,13 +71,13 @@ This BCSwiftCBOR project is either derived from or was inspired by:
 
 ### Adapted by ...
 
-These are adaptations, conversions, and wrappers that make BCSwiftCBOR available for other languages:
+These are adaptations, conversions, and wrappers that make BCSwiftDCBOR available for other languages:
 
 - [community/repo-name/](https://github.com/community/repo-name) — Repo that does what, by [developer](https://github.com/developer)  or from  [community](https://community.com)(language).
 
 ### Used by ...
 
-These are other projects that directly use BCSwiftCBOR:
+These are other projects that directly use BCSwiftDCBOR:
 
 - [community/repo-name/](https://github.com/community/repo-name) — Repo that does what, by [developer](https://github.com/developer)  or from  [community](https://community.com)(use OR fork [version] OR include [version]).
 
@@ -85,19 +85,19 @@ Libraries may be marked as `use` (the current version of our repo is used), `for
 
 ### Used with ...
 
-These are other projects that work with or leverage BCSwiftCBOR:
+These are other projects that work with or leverage BCSwiftDCBOR:
 
 - [community/repo-name/](https://github.com/community/repo-name) — Repo that does what, by [developer](https://github.com/developer)  or from  [community](https://community.com).
 
 ## Financial Support
 
-BCSwiftCBOR is a project of [Blockchain Commons](https://www.blockchaincommons.com/). We are proudly a "not-for-profit" social benefit corporation committed to open source & open development. Our work is funded entirely by donations and collaborative partnerships with people like you. Every contribution will be spent on building open tools, technologies, and techniques that sustain and advance blockchain and internet security infrastructure and promote an open web.
+BCSwiftDCBOR is a project of [Blockchain Commons](https://www.blockchaincommons.com/). We are proudly a "not-for-profit" social benefit corporation committed to open source & open development. Our work is funded entirely by donations and collaborative partnerships with people like you. Every contribution will be spent on building open tools, technologies, and techniques that sustain and advance blockchain and internet security infrastructure and promote an open web.
 
-To financially support further development of BCSwiftCBOR and other projects, please consider becoming a Patron of Blockchain Commons through ongoing monthly patronage as a [GitHub Sponsor](https://github.com/sponsors/BlockchainCommons). You can also support Blockchain Commons with bitcoins at our [BTCPay Server](https://btcpay.blockchaincommons.com/).
+To financially support further development of BCSwiftDCBOR and other projects, please consider becoming a Patron of Blockchain Commons through ongoing monthly patronage as a [GitHub Sponsor](https://github.com/sponsors/BlockchainCommons). You can also support Blockchain Commons with bitcoins at our [BTCPay Server](https://btcpay.blockchaincommons.com/).
 
 ### Project Sponsors
 
-Thanks to our project sponsors for their support of BCSwiftCBOR:
+Thanks to our project sponsors for their support of BCSwiftDCBOR:
 
 $sponsor-logo-with-link
 

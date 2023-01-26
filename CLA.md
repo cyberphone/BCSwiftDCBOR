@@ -8,7 +8,7 @@ E-Mail: `$email`
 
 Legal Jurisdiction: Wyoming, United States of America
 
-Project: https://github.com/BlockchainCommons/BCSwiftCBOR
+Project: https://github.com/BlockchainCommons/BCSwiftDCBOR
 
 Date: `$date`
 
