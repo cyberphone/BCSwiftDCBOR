@@ -1,14 +1,14 @@
 import Foundation
 
 enum MajorType: Int {
-    case UInt
-    case NInt
-    case Bytes
-    case String
-    case Array
-    case Map
-    case Tagged
-    case Value
+    case unsigned
+    case negative
+    case bytes
+    case text
+    case array
+    case map
+    case tagged
+    case simple
 }
 
 func typeBits(_ t: MajorType) -> UInt8 {

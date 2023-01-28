@@ -2,10 +2,10 @@ import Foundation
 
 extension String: CBOREncodable {
     public var cbor: CBOR {
-        .String(self)
+        .text(self)
     }
     
     public func encodeCBOR() -> Data {
-        count.encodeVarInt(.String) + self.utf8Data
+        count.encodeVarInt(.text) + self.utf8Data
     }
 }

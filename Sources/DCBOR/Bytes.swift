@@ -3,10 +3,10 @@ import WolfBase
 
 extension Data: CBOREncodable {
     public var cbor: CBOR {
-        .Bytes(self)
+        .bytes(self)
     }
     
     public func encodeCBOR() -> Data {
-        data.count.encodeVarInt(.Bytes) + self
+        data.count.encodeVarInt(.bytes) + self
     }
 }

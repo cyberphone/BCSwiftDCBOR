@@ -4,44 +4,59 @@ import OrderedCollections
 /// A symbolic representation of CBOR data.
 public indirect enum CBOR {
     /// Unsigned integer (major type 0).
-    case UInt(UInt64)
+    case unsigned(UInt64)
     /// Negative integer (major type 1).
-    case NInt(Int64)
+    case negative(Int64)
     /// Byte string (major type 2).
-    case Bytes(Data)
+    case bytes(Data)
     /// UTF-8 string (major type 3).
-    case String(String)
+    case text(String)
     /// Array (major type 4).
-    case Array([CBOR])
+    case array([CBOR])
     /// Map (major type 5).
-    case Map(Map)
+    case map(Map)
     /// Tagged value (major type 6).
-    case Tagged(Tagged)
+    case tagged(Tagged)
     /// Simple value (majory type 7).
-    case Value(Value)
+    case value(Value)
+}
+
+public extension CBOR {
+    /// The CBOR symbolic value for `false`.
+    static var `false` = Value(20).cbor
+    /// The CBOR symbolic value for `true`.
+    static var `true` = Value(21).cbor
+    /// The CBOR symbolic value for `null` (`nil`).
+    static var null = Value(22).cbor
+
+    /// Creates the symbolic CBOR representation of a value conforming to ``CBOREncodable``.
+    init<T>(_ x: T) where T: CBOREncodable {
+        self = x.cbor
+    }
 }
 
 /// A value that can be encoded as CBOR.
 ///
 /// ## Conforming Native Types
 ///
-/// In addition to types defined in this package like ``Bytes``, ``Map``, ``Tagged``, ``Value``, the following
+/// In addition to types defined in this package like ``Map``, ``Tagged``, and ``Value``, the following
 /// native types also conform to ``CBOREncodable``:
 ///
-/// * `UInt8`
-/// * `UInt16`
-/// * `UInt32`
-/// * `UInt64`
-/// * `UInt`
+/// * `Array where Element: CBOREncodable`
+/// * `Bool`
+/// * `Data`
+/// * `Date`
+/// * `Int`
 /// * `Int8`
 /// * `Int16`
 /// * `Int32`
 /// * `Int64`
-/// * `Int`
-/// * `Array where Element: CBOREncodable`
 /// * `String`
-/// * `Bool`
-/// * `Data`
+/// * `UInt`
+/// * `UInt8`
+/// * `UInt16`
+/// * `UInt32`
+/// * `UInt64`
 public protocol CBOREncodable {
     /// Returns the value in CBOR symbolic representation.
     var cbor: CBOR { get }
@@ -56,22 +71,22 @@ extension CBOR: CBOREncodable {
 
     public func encodeCBOR() -> Data {
         switch self {
-        case .UInt(let x):
+        case .unsigned(let x):
             return x.encodeCBOR()
-        case .NInt(let x):
+        case .negative(let x):
             precondition(x < 0)
             return x.encodeCBOR()
-        case .Bytes(let x):
+        case .bytes(let x):
             return x.encodeCBOR()
-        case .String(let x):
+        case .text(let x):
             return x.encodeCBOR()
-        case .Array(let x):
+        case .array(let x):
             return x.encodeCBOR()
-        case .Map(let x):
+        case .map(let x):
             return x.encodeCBOR()
-        case .Tagged(let x):
+        case .tagged(let x):
             return x.encodeCBOR()
-        case .Value(let x):
+        case .value(let x):
             return x.encodeCBOR()
         }
     }
@@ -80,14 +95,14 @@ extension CBOR: CBOREncodable {
 extension CBOR: Equatable {
     public static func ==(lhs: CBOR, rhs: CBOR) -> Bool {
         switch (lhs, rhs) {
-        case (CBOR.UInt(let l), CBOR.UInt(let r)): return l == r
-        case (CBOR.NInt(let l), CBOR.NInt(let r)): return l == r
-        case (CBOR.Bytes(let l), CBOR.Bytes(let r)): return l == r
-        case (CBOR.String(let l), CBOR.String(let r)): return l == r
-        case (CBOR.Array(let l), CBOR.Array(let r)): return l == r
-        case (CBOR.Map(let l), CBOR.Map(let r)): return l == r
-        case (CBOR.Tagged(let l), CBOR.Tagged(let r)): return l == r
-        case (CBOR.Value(let l), CBOR.Value(let r)): return l == r
+        case (CBOR.unsigned(let l), CBOR.unsigned(let r)): return l == r
+        case (CBOR.negative(let l), CBOR.negative(let r)): return l == r
+        case (CBOR.bytes(let l), CBOR.bytes(let r)): return l == r
+        case (CBOR.text(let l), CBOR.text(let r)): return l == r
+        case (CBOR.array(let l), CBOR.array(let r)): return l == r
+        case (CBOR.map(let l), CBOR.map(let r)): return l == r
+        case (CBOR.tagged(let l), CBOR.tagged(let r)): return l == r
+        case (CBOR.value(let l), CBOR.value(let r)): return l == r
         default: return false
         }
     }
@@ -96,21 +111,21 @@ extension CBOR: Equatable {
 extension CBOR: CustomStringConvertible {
     public var description: String {
         switch self {
-        case .UInt(let x):
+        case .unsigned(let x):
             return x.description
-        case .NInt(let x):
+        case .negative(let x):
             return x.description
-        case .Bytes(let x):
+        case .bytes(let x):
             return x.hex.flanked("h'", "'")
-        case .String(let x):
+        case .text(let x):
             return x.description.flanked("\"")
-        case .Array(let x):
+        case .array(let x):
             return x.map({ $0.description }).joined(separator: ", ").flanked("[", "]")
-        case .Map(let x):
+        case .map(let x):
             return x.description
-        case .Tagged(let x):
+        case .tagged(let x):
             return x.description
-        case .Value(let x):
+        case .value(let x):
             return x.description
         }
     }
@@ -119,22 +134,61 @@ extension CBOR: CustomStringConvertible {
 extension CBOR: CustomDebugStringConvertible {
     public var debugDescription: String {
         switch self {
-        case .UInt(let x):
-            return "UInt(\(x))"
-        case .NInt(let x):
-            return "NInt(\(x))"
-        case .Bytes(let x):
-            return "Bytes(\(x.hex))"
-        case .String(let x):
-            return "String(\(x.flanked("\"")))"
-        case .Array(let x):
-            return "Array(\(x))"
-        case .Map(let x):
-            return "Map(\(x.debugDescription))"
-        case .Tagged(let x):
-            return "Tagged(\(x.tag), \(x.item.debugDescription))"
-        case .Value(let x):
-            return "Value(\(x.debugDescription))"
+        case .unsigned(let x):
+            return "unsigned(\(x))"
+        case .negative(let x):
+            return "negative(\(x))"
+        case .bytes(let x):
+            return "bytes(\(x.hex))"
+        case .text(let x):
+            return "text(\(x.flanked("\"")))"
+        case .array(let x):
+            return "array(\(x))"
+        case .map(let x):
+            return "map(\(x.debugDescription))"
+        case .tagged(let x):
+            return "tagged(\(x.tag), \(x.item.debugDescription))"
+        case .value(let x):
+            return "value(\(x.debugDescription))"
         }
+    }
+}
+
+public extension CBOR {
+    /// Decode CBOR binary representation to symbolic representation.
+    ///
+    /// Throws an error if the data is not well-formed deterministic CBOR.
+    init(_ data: Data) throws {
+        self = try decodeCBOR(data)
+    }
+}
+
+extension CBOR: ExpressibleByBooleanLiteral {
+    public init(booleanLiteral value: BooleanLiteralType) {
+        self = value ? Self.true : Self.false
+    }
+}
+
+extension CBOR: ExpressibleByNilLiteral {
+    public init(nilLiteral: ()) {
+        self = CBOR.null
+    }
+}
+
+extension CBOR: ExpressibleByIntegerLiteral {
+    public init(integerLiteral value: IntegerLiteralType) {
+        self = value.cbor
+    }
+}
+
+extension CBOR: ExpressibleByStringLiteral {
+    public init(stringLiteral value: StringLiteralType) {
+        self = value.cbor
+    }
+}
+
+extension CBOR: ExpressibleByArrayLiteral {
+    public init(arrayLiteral elements: CBOREncodable...) {
+        self = (elements.map { $0.cbor }).cbor
     }
 }

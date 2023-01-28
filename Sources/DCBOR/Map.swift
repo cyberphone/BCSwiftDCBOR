@@ -5,51 +5,121 @@ import SortedCollections
 ///
 /// Keys are kept sorted by encoded CBOR form in ascending lexicographic order.
 public struct Map: Equatable {
-    var dict: SortedDictionary<Key, Value>
+    var dict: SortedDictionary<MapKey, MapValue>
     
     /// Creates a new empty CBOR map.
     public init() {
         self.dict = .init()
     }
     
-    /// Inserts a key-value pair into the map.
-    public mutating func insert<K, V>(_ key: K, _ value: V) where K: CBOREncodable, V: CBOREncodable {
-        dict[Key(key.encodeCBOR())] = Value(key: key.cbor, value: value.cbor)
+    /// Creates a new CBOR map from the provided sequence of key-value pairs.
+    public init<S>(_ elements: S) where S: Sequence, S.Element == (any CBOREncodable, any CBOREncodable) {
+        self.init()
+        for (k, v) in elements {
+            self.insert(k, v)
+        }
     }
     
-    mutating func insertNext<K, V>(_ key: K, _ value: V) -> Bool where K: CBOREncodable, V: CBOREncodable {
+    /// Inserts a key-value pair into the map.
+    public mutating func insert<K, V>(_ key: K, _ value: V) where K: CBOREncodable, V: CBOREncodable {
+        dict[MapKey(key)] = MapValue(key: key.cbor, value: value.cbor)
+    }
+    
+    /// Removes the specified key from the map, returning the removed value if any.
+    public mutating func remove<K>(_ key: K) -> CBOR? where K: CBOREncodable {
+        dict.removeValue(forKey: MapKey(key))?.value
+    }
+    
+    /// Returns the number of entries in the map.
+    public var count: Int { dict.count }
+    
+    /// Returns an array of all the key-value pairs in the map.
+    public var entries: [(key: CBOR, value: CBOR)] {
+        dict.map { ($1.key, $1.value) }
+    }
+    
+    mutating func insertNext<K, V>(_ key: K, _ value: V) throws where K: CBOREncodable, V: CBOREncodable {
         guard let lastEntry = dict.last else {
             self.insert(key, value)
-            return true
+            return
         }
-        let newKey = Key(key.encodeCBOR())
+        let newKey = MapKey(key)
+        guard dict[newKey] == nil else {
+            throw DecodeError.DuplicateMapKey
+        }
         let entryKey = lastEntry.key
         guard entryKey < newKey else {
-            return false
+            throw DecodeError.MisorderedMapKey
         }
-        self.dict[newKey] = Value(key: key.cbor, value: value.cbor)
-        return true
+        self.dict[newKey] = MapValue(key: key.cbor, value: value.cbor)
     }
 
-    struct Value: Equatable {
+    struct MapValue: Equatable {
         let key: CBOR
         let value: CBOR
     }
 
-    struct Key: Comparable {
+    struct MapKey: Comparable {
         let keyData: Data
         
         init(_ keyData: Data) {
             self.keyData = keyData
         }
         
-        static func < (lhs: Key, rhs: Key) -> Bool {
+        init<T>(_ k: T) where T: CBOREncodable {
+            self.init(k.encodeCBOR())
+        }
+        
+        static func < (lhs: MapKey, rhs: MapKey) -> Bool {
             lhs.keyData.lexicographicallyPrecedes(rhs.keyData)
+        }
+    }
+    
+    /// Gets or sets the value for the given key.
+    public subscript<T>(key: T) -> CBOR? where T: CBOREncodable {
+        get {
+            dict[MapKey(key)]?.value
+        }
+        
+        set {
+            if let newValue {
+                insert(key, newValue)
+            } else {
+                _ = remove(key)
+            }
         }
     }
 }
 
-extension Map.Key: CustomDebugStringConvertible {
+extension Map: ExpressibleByDictionaryLiteral {
+    public init(dictionaryLiteral elements: (CBOREncodable, CBOREncodable)...) {
+        self.init(elements)
+    }
+}
+
+extension Map: Sequence {
+    public func makeIterator() -> Iterator {
+        return Iterator(dict)
+    }
+
+    public struct Iterator: IteratorProtocol {
+        public typealias Element = (CBOR, CBOR)
+        var iter: SortedDictionary<MapKey, MapValue>.Iterator
+        
+        init(_ dict: SortedDictionary<MapKey, MapValue>) {
+            self.iter = dict.makeIterator()
+        }
+        
+        public mutating func next() -> (CBOR, CBOR)? {
+            guard let v = iter.next() else {
+                return nil
+            }
+            return (v.value.key, v.value.value)
+        }
+    }
+}
+
+extension Map.MapKey: CustomDebugStringConvertible {
     var debugDescription: String {
         "0x" + keyData.hex
     }
@@ -57,14 +127,14 @@ extension Map.Key: CustomDebugStringConvertible {
 
 extension Map: CBOREncodable {
     public var cbor: CBOR {
-        .Map(self)
+        .map(self)
     }
     
     public func encodeCBOR() -> Data {
-        let pairs = self.dict.map { (key: Key, value: Value) in
+        let pairs = self.dict.map { (key: MapKey, value: MapValue) in
             (key, value.value.encodeCBOR())
         }
-        var buf = pairs.count.encodeVarInt(.Map)
+        var buf = pairs.count.encodeVarInt(.map)
         for pair in pairs {
             buf += pair.0.keyData
             buf += pair.1

@@ -1,10 +1,7 @@
 import Foundation
 import WolfBase
 
-/// Decode CBOR binary representation to symbolic representation.
-///
-/// Throws an error if the data is not well-formed deterministic CBOR.
-public func decodeCBOR(_ data: Data) throws -> CBOR {
+func decodeCBOR(_ data: Data) throws -> CBOR {
     let (cbor, len) = try decodeCBORInternal(ArraySlice(data))
     let remaining = data.count - len
     guard remaining == 0 else {
@@ -27,6 +24,8 @@ public enum DecodeError: LocalizedError, Equatable {
     case UnusedData(Int)
     /// The decoded CBOR map has keys that are not in canonical order.
     case MisorderedMapKey
+    /// The decoded CBOR map has a duplicate key.
+    case DuplicateMapKey
 }
 
 extension ArraySlice where Element == UInt8 {
@@ -47,21 +46,21 @@ func parseHeader(_ header: UInt8) -> (MajorType, UInt8) {
     let majorType: MajorType
     switch header >> 5 {
     case 0:
-        majorType = .UInt
+        majorType = .unsigned
     case 1:
-        majorType = .NInt
+        majorType = .negative
     case 2:
-        majorType = .Bytes
+        majorType = .bytes
     case 3:
-        majorType = .String
+        majorType = .text
     case 4:
-        majorType = .Array
+        majorType = .array
     case 5:
-        majorType = .Map
+        majorType = .map
     case 6:
-        majorType = .Tagged
+        majorType = .tagged
    case 7:
-        majorType = .Value
+        majorType = .simple
     default:
         preconditionFailure()
     }
@@ -156,27 +155,27 @@ func decodeCBORInternal(_ data: ArraySlice<UInt8>) throws -> (cbor: CBOR, len: I
     }
     let (majorType, value, headerVarIntLen) = try parseHeaderVarint(data)
     switch majorType {
-    case .UInt:
-        return (.UInt(value), headerVarIntLen)
-    case .NInt:
+    case .unsigned:
+        return (.unsigned(value), headerVarIntLen)
+    case .negative:
         if value == UInt64.max {
-            return (.NInt(Int64.min), headerVarIntLen)
+            return (.negative(Int64.min), headerVarIntLen)
         } else {
-            return (.NInt(-Int64(value) - 1), headerVarIntLen)
+            return (.negative(-Int64(value) - 1), headerVarIntLen)
         }
-    case .Bytes:
+    case .bytes:
         let dataLen = Int(value)
         let buf = try parseBytes(data.from(headerVarIntLen), len: dataLen)
         let bytes = Data(buf)
         return (bytes.cbor, headerVarIntLen + dataLen)
-    case .String:
+    case .text:
         let dataLen = Int(value)
         let buf = try parseBytes(data.from(headerVarIntLen), len: dataLen)
         guard let string = String(bytes: buf, encoding: .utf8) else {
             throw DecodeError.InvalidString
         }
         return (string.cbor, headerVarIntLen + dataLen)
-    case .Array:
+    case .array:
         var pos = headerVarIntLen
         var items: [CBOR] = []
         for _ in 0..<value {
@@ -185,7 +184,7 @@ func decodeCBORInternal(_ data: ArraySlice<UInt8>) throws -> (cbor: CBOR, len: I
             pos += itemLen
         }
         return (items.cbor, pos)
-    case .Map:
+    case .map:
         var pos = headerVarIntLen
         var map = Map()
         for _ in 0..<value {
@@ -193,16 +192,14 @@ func decodeCBORInternal(_ data: ArraySlice<UInt8>) throws -> (cbor: CBOR, len: I
             pos += keyLen
             let (value, valueLen) = try decodeCBORInternal(data.from(pos))
             pos += valueLen
-            guard map.insertNext(key, value) else {
-                throw DecodeError.MisorderedMapKey
-            }
+            try map.insertNext(key, value)
         }
         return (map.cbor, pos)
-    case .Tagged:
+    case .tagged:
         let (item, itemLen) = try decodeCBORInternal(data.from(headerVarIntLen))
-        let tagged = Tagged(tag: value, item: item)
+        let tagged = Tagged(value, item)
         return (tagged.cbor, headerVarIntLen + itemLen)
-    case .Value:
+    case .simple:
         return (Value(value).cbor, headerVarIntLen)
     }
 }

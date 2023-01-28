@@ -3,11 +3,11 @@ import Foundation
 /// A CBOR simple value.
 public struct Value: Equatable {
     /// The raw value.
-    let rawValue: UInt64
+    public let rawValue: UInt64
     
     /// Creates a new CBOR “simple” value.
-    public init(_ n: UInt64) {
-        self.rawValue = n
+    public init(_ rawValue: UInt64) {
+        self.rawValue = rawValue
     }
     
     /// Returns the known name of the value, if it has been assigned one.
@@ -16,38 +16,27 @@ public struct Value: Equatable {
     }
 }
 
-let cborFalse = Value(20).cbor
-let cborTrue = Value(21).cbor
-let cborFalseEncoded = cborFalse.encodeCBOR()
-let cborTrueEncoded = cborTrue.encodeCBOR()
+private let cborFalseEncoded = CBOR.false.encodeCBOR()
+private let cborTrueEncoded = CBOR.true.encodeCBOR()
+private let cborNullEncoded = CBOR.null.encodeCBOR()
 
 extension Bool: CBOREncodable {
     public var cbor: CBOR {
-        switch self {
-        case false:
-            return cborFalse
-        case true:
-            return cborTrue
-        }
+        self ? CBOR.true : CBOR.false
     }
     
     public func encodeCBOR() -> Data {
-        switch self {
-        case false:
-            return cborFalseEncoded
-        case true:
-            return cborTrueEncoded
-        }
+        self ? cborTrueEncoded : cborFalseEncoded
     }
 }
 
 extension Value: CBOREncodable {
     public var cbor: CBOR {
-        .Value(self)
+        .value(self)
     }
     
     public func encodeCBOR() -> Data {
-        rawValue.encodeVarInt(.Value)
+        rawValue.encodeVarInt(.simple)
     }
 }
 
@@ -58,6 +47,8 @@ extension Value: CustomDebugStringConvertible {
             return "false"
         case 21:
             return "true"
+        case 22:
+            return "null"
         default:
             return String(rawValue)
         }
@@ -71,6 +62,8 @@ extension Value: CustomStringConvertible {
             return "false"
         case 21:
             return "true"
+        case 22:
+            return "null"
         default:
             return "simple(\(rawValue))"
         }

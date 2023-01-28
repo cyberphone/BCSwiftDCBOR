@@ -8,36 +8,31 @@ public struct Tagged: Equatable {
     public let item: CBOR
     
     /// Creates a new tagged value.
-    public init<T>(tag: UInt64, item: T) where T: CBOREncodable {
+    public init<T>(_ tag: UInt64, _ item: T) where T: CBOREncodable {
         self.tag = tag
         self.item = item.cbor
-    }
-    
-    /// The known name of the tag, if it has been assigned one.
-    public var name: String {
-        String(tag)
     }
 }
 
 extension Tagged: CBOREncodable {
     public var cbor: CBOR {
-        .Tagged(self)
+        .tagged(self)
     }
     
     public func encodeCBOR() -> Data {
-        tag.encodeVarInt(.Tagged) + item.encodeCBOR()
+        tag.encodeVarInt(.tagged) + item.encodeCBOR()
     }
 }
 
 extension Tagged: CustomDebugStringConvertible {
     public var debugDescription: String {
-        "Tagged(tag: \(name), item: \(item.debugDescription))"
+        "tagged(tag: \(tag), item: \(item.debugDescription))"
     }
 }
 
 extension Tagged: CustomStringConvertible {
     public var description: String {
-        let a = "\(name)(\(item))"
+        let a = "\(tag)(\(item))"
         return a
     }
 }
