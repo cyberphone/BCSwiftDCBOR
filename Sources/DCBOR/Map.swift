@@ -45,11 +45,11 @@ public struct Map: Equatable {
         }
         let newKey = MapKey(key)
         guard dict[newKey] == nil else {
-            throw DecodeError.DuplicateMapKey
+            throw DecodeError.duplicateMapKey
         }
         let entryKey = lastEntry.key
         guard entryKey < newKey else {
-            throw DecodeError.MisorderedMapKey
+            throw DecodeError.misorderedMapKey
         }
         self.dict[newKey] = MapValue(key: key.cbor, value: value.cbor)
     }
@@ -125,7 +125,7 @@ extension Map.MapKey: CustomDebugStringConvertible {
     }
 }
 
-extension Map: CBOREncodable {
+extension Map: CBORCodable {
     public var cbor: CBOR {
         .map(self)
     }
@@ -140,6 +140,15 @@ extension Map: CBOREncodable {
             buf += pair.1
         }
         return buf
+    }
+    
+    public static func decodeCBOR(_ cbor: CBOR) throws -> Map {
+        switch cbor {
+        case .map(let map):
+            return map
+        default:
+            throw DecodeError.wrongType
+        }
     }
 }
 

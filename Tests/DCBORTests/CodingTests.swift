@@ -3,7 +3,7 @@ import WolfBase
 import DCBOR
 
 final class CodingTests: XCTestCase {
-    func runTest<T>(_ t: T, _ expectedDebugDescription: String, _ expectedDescription: String, _ expectedData: String) where T: CBOREncodable {
+    func runTest<T>(_ t: T, _ expectedDebugDescription: String, _ expectedDescription: String, _ expectedData: String) where T: CBORCodable {
         let cbor = t.cbor
         XCTAssertEqual(cbor.debugDescription, expectedDebugDescription)
         XCTAssertEqual(cbor.description, expectedDescription)
@@ -11,6 +11,8 @@ final class CodingTests: XCTestCase {
         XCTAssertEqual(data, expectedData.hexData!)
         let decodedCBOR = try! CBOR(data)
         XCTAssertEqual(cbor, decodedCBOR)
+        let decodedT = try! T.decodeCBOR(cbor)
+        XCTAssertEqual(t, decodedT)
     }
 
     func testUnsigned() throws {
@@ -141,7 +143,7 @@ final class CodingTests: XCTestCase {
     func testMisorderedMap() {
         let mapWithOutOfOrderKeys = ‡"a8f4080a011864022003617a046261610581186406812007"
         XCTAssertThrowsError(try CBOR(mapWithOutOfOrderKeys)) {
-            guard case DecodeError.MisorderedMapKey = $0 else {
+            guard case DecodeError.misorderedMapKey = $0 else {
                 XCTFail()
                 return
             }
@@ -151,7 +153,7 @@ final class CodingTests: XCTestCase {
     func testDuplicateKey() {
         let mapWithDuplicateKey = ‡"a90a011864022003617a046261610581186406812007f408f408"
         XCTAssertThrowsError(try CBOR(mapWithDuplicateKey)) {
-            guard case DecodeError.DuplicateMapKey = $0 else {
+            guard case DecodeError.duplicateMapKey = $0 else {
                 XCTFail()
                 return
             }
@@ -175,7 +177,7 @@ final class CodingTests: XCTestCase {
     func testUnusedData() {
         XCTAssertThrowsError(try CBOR(‡"0001")) {
             guard
-                case DecodeError.UnusedData(let remaining) = $0,
+                case DecodeError.unusedData(let remaining) = $0,
                 remaining == 1
             else {
                 XCTFail()

@@ -14,13 +14,22 @@ public struct Tagged: Equatable {
     }
 }
 
-extension Tagged: CBOREncodable {
+extension Tagged: CBORCodable {
     public var cbor: CBOR {
         .tagged(self)
     }
     
     public func encodeCBOR() -> Data {
         tag.encodeVarInt(.tagged) + item.encodeCBOR()
+    }
+    
+    public static func decodeCBOR(_ cbor: CBOR) throws -> Tagged {
+        switch cbor {
+        case .tagged(let tagged):
+            return tagged
+        default:
+            throw DecodeError.wrongType
+        }
     }
 }
 
