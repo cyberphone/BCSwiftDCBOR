@@ -17,12 +17,12 @@ extension Date: CBORTaggedCodable {
         }
     }
     
-    public static func decodeUntaggedCBOR(_ cbor: CBOR) throws -> Date {
-        switch cbor {
+    public init(untaggedCBOR: CBOR) throws {
+        switch untaggedCBOR {
         case .unsigned(let n):
-            return Date(timeIntervalSince1970: TimeInterval(n))
+            self = Date(timeIntervalSince1970: TimeInterval(n))
         case .negative(let n):
-            return Date(timeIntervalSince1970: TimeInterval(n))
+            self = Date(timeIntervalSince1970: TimeInterval(n))
         default:
             throw CBORDecodingError.wrongType
         }

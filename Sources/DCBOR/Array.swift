@@ -5,20 +5,20 @@ extension Array: CBOREncodable where Element: CBOREncodable {
         .array(self.map { $0.cbor })
     }
 
-    public func encodeCBOR() -> Data {
+    public var cborData: Data {
         var buf = self.count.encodeVarInt(.array)
         for element in self {
-            buf += element.encodeCBOR()
+            buf += element.cborData
         }
         return buf
     }
 }
 
 extension Array: CBORDecodable where Element: CBORDecodable {
-    public static func decodeCBOR(_ cbor: CBOR) throws -> Self {
+    public init(cbor: CBOR) throws {
         switch cbor {
         case .array(let array):
-            return try array.map { try Element.decodeCBOR($0) }
+            self = try array.map { try Element(cbor: $0) }
         default:
             throw CBORDecodingError.wrongType
         }
@@ -32,10 +32,10 @@ public extension Array where Element == any CBOREncodable {
         .array(self.map { $0.cbor })
     }
     
-    func encodeCBOR() -> Data {
+    var cborData: Data {
         var buf = self.count.encodeVarInt(.array)
         for element in self {
-            buf += element.encodeCBOR()
+            buf += element.cborData
         }
         return buf
     }

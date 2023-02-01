@@ -10,7 +10,7 @@ public extension CBOR {
     ///   - knownTags: If `annotate` is `true`, uses the name of these tags rather than their number.
     func dump(annotate: Bool = false, knownTags: KnownTags? = nil) -> String {
         guard annotate == true else {
-            return encodeCBOR().hex
+            return cborData.hex
         }
         let items = dumpItems(level: 0, knownTags: knownTags)
         let noteColumn = items.reduce(into: 0) { largest, item in
@@ -62,9 +62,9 @@ extension CBOR {
     func dumpItems(level: Int, knownTags: KnownTags?) -> [DumpItem] {
         switch self {
         case .unsigned(let n):
-            return [DumpItem(level: level, data: self.encodeCBOR(), note: "unsigned(\(n))")]
+            return [DumpItem(level: level, data: self.cborData, note: "unsigned(\(n))")]
         case .negative(let n):
-            return [DumpItem(level: level, data: self.encodeCBOR(), note: "negative(\(n))")]
+            return [DumpItem(level: level, data: self.cborData, note: "negative(\(n))")]
         case .bytes(let d):
             let note = d.utf8?.sanitized?.flanked("\"")
             var items = [
@@ -81,7 +81,7 @@ extension CBOR {
                 DumpItem(level: level + 1, data: s.utf8Data, note: s.flanked("\""))
             ]
         case .value(let v):
-            let data = v.encodeCBOR()
+            let data = v.cborData
             let note = v.description
             return [
                 DumpItem(level: level, data: data, note: note)

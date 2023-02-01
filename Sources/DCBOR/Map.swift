@@ -67,7 +67,7 @@ public struct Map: Equatable {
         }
         
         init<T>(_ k: T) where T: CBOREncodable {
-            self.init(k.encodeCBOR())
+            self.init(k.cborData)
         }
         
         static func < (lhs: MapKey, rhs: MapKey) -> Bool {
@@ -130,9 +130,9 @@ extension Map: CBORCodable {
         .map(self)
     }
     
-    public func encodeCBOR() -> Data {
+    public var cborData: Data {
         let pairs = self.dict.map { (key: MapKey, value: MapValue) in
-            (key, value.value.encodeCBOR())
+            (key, value.value.cborData)
         }
         var buf = pairs.count.encodeVarInt(.map)
         for pair in pairs {
@@ -142,10 +142,10 @@ extension Map: CBORCodable {
         return buf
     }
     
-    public static func decodeCBOR(_ cbor: CBOR) throws -> Map {
+    public init(cbor: CBOR) throws {
         switch cbor {
         case .map(let map):
-            return map
+            self = map
         default:
             throw CBORDecodingError.wrongType
         }

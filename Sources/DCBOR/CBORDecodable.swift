@@ -1,12 +1,12 @@
 import Foundation
 
 public protocol CBORDecodable {
-    static func decodeCBOR(_ cbor: CBOR) throws -> Self
-    static func decodeCBOR(_ data: Data) throws -> Self
+    init(cbor: CBOR) throws
+    init(cborData: Data) throws
 }
 
 public extension CBORDecodable {
-    static func decodeCBOR(_ data: Data) throws -> Self {
-        try decodeCBOR(DCBOR.decodeCBOR(data))
+    init(cborData: Data) throws {
+        self = try Self.init(cbor: CBOR(cborData))
     }
 }

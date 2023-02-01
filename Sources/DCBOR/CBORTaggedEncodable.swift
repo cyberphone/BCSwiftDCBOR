@@ -15,7 +15,7 @@ public extension CBORTaggedEncodable {
         taggedCBOR
     }
     
-    func encodeCBOR() -> Data {
-        taggedCBOR.encodeCBOR()
+    var cborData: Data {
+        taggedCBOR.cborData
     }
 }

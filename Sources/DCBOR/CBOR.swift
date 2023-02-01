@@ -41,25 +41,25 @@ extension CBOR: CBOREncodable {
         self
     }
 
-    public func encodeCBOR() -> Data {
+    public var cborData: Data {
         switch self {
         case .unsigned(let x):
-            return x.encodeCBOR()
+            return x.cborData
         case .negative(let x):
             precondition(x < 0)
-            return x.encodeCBOR()
+            return x.cborData
         case .bytes(let x):
-            return x.encodeCBOR()
+            return x.cborData
         case .text(let x):
-            return x.encodeCBOR()
+            return x.cborData
         case .array(let x):
-            return x.encodeCBOR()
+            return x.cborData
         case .map(let x):
-            return x.encodeCBOR()
+            return x.cborData
         case .tagged(let tag, let item):
-            return tag.value.encodeVarInt(.tagged) + item.encodeCBOR()
+            return tag.value.encodeVarInt(.tagged) + item.cborData
         case .value(let x):
-            return x.encodeCBOR()
+            return x.cborData
         }
     }
 }
@@ -133,11 +133,6 @@ public extension CBOR {
     init(_ data: Data) throws {
         self = try decodeCBOR(data)
     }
-    
-    /// Represent a `Data` object as CBOR bytes.
-    init(bytes: Data) {
-        self = .bytes(bytes)
-    }
 }
 
 extension CBOR: ExpressibleByBooleanLiteral {
@@ -172,6 +167,6 @@ extension CBOR: ExpressibleByArrayLiteral {
 
 extension CBOR: DataProvider {
     public var providedData: Data {
-        encodeCBOR()
+        cborData
     }
 }

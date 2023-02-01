@@ -19,14 +19,14 @@ extension Tagged: CBORCodable {
         .tagged(tag, item)
     }
 
-    public func encodeCBOR() -> Data {
-        tag.value.encodeVarInt(.tagged) + item.encodeCBOR()
+    public var cborData: Data {
+        tag.value.encodeVarInt(.tagged) + item.cborData
     }
 
-    public static func decodeCBOR(_ cbor: CBOR) throws -> Tagged {
+    public init(cbor: CBOR) throws {
         switch cbor {
         case .tagged(let tag, let item):
-            return Tagged(tag, item)
+            self = Tagged(tag, item)
         default:
             throw CBORDecodingError.wrongType
         }

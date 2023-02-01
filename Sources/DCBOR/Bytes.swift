@@ -6,14 +6,14 @@ extension Data: CBORCodable {
         .bytes(self)
     }
     
-    public func encodeCBOR() -> Data {
+    public var cborData: Data {
         data.count.encodeVarInt(.bytes) + self
     }
     
-    public static func decodeCBOR(_ cbor: CBOR) throws -> Data {
+    public init(cbor: CBOR) throws {
         switch cbor {
         case .bytes(let data):
-            return data
+            self = data
         default:
             throw CBORDecodingError.wrongType
         }

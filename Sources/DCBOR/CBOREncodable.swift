@@ -27,11 +27,11 @@ public protocol CBOREncodable {
     var cbor: CBOR { get }
 
     /// Returns the value in CBOR binary representation.
-    func encodeCBOR() -> Data
+    var cborData: Data { get }
 }
 
 public extension CBOREncodable {
-    func encodeCBOR() -> Data {
-        cbor.encodeCBOR()
+    var cborData: Data {
+        cbor.cborData
     }
 }

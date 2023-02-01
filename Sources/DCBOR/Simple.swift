@@ -16,25 +16,25 @@ public struct Value: Equatable {
     }
 }
 
-private let cborFalseEncoded = CBOR.false.encodeCBOR()
-private let cborTrueEncoded = CBOR.true.encodeCBOR()
-private let cborNullEncoded = CBOR.null.encodeCBOR()
+private let cborFalseEncoded = CBOR.false.cborData
+private let cborTrueEncoded = CBOR.true.cborData
+private let cborNullEncoded = CBOR.null.cborData
 
 extension Bool: CBORCodable {
     public var cbor: CBOR {
         self ? CBOR.true : CBOR.false
     }
     
-    public func encodeCBOR() -> Data {
+    public var cborData: Data {
         self ? cborTrueEncoded : cborFalseEncoded
     }
     
-    public static func decodeCBOR(_ cbor: CBOR) throws -> Bool {
+    public init(cbor: CBOR) throws {
         switch cbor {
         case CBOR.true:
-            return true
+            self = true
         case CBOR.false:
-            return false
+            self = false
         default:
             throw CBORDecodingError.wrongType
         }
@@ -46,14 +46,14 @@ extension Value: CBORCodable {
         .value(self)
     }
     
-    public func encodeCBOR() -> Data {
+    public var cborData: Data {
         rawValue.encodeVarInt(.simple)
     }
     
-    public static func decodeCBOR(_ cbor: CBOR) throws -> Value {
+    public init(cbor: CBOR) throws {
         switch cbor {
         case .value(let value):
-            return value
+            self = value
         default:
             throw CBORDecodingError.wrongType
         }

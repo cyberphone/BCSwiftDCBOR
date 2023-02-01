@@ -25,12 +25,12 @@ extension UInt8: CBORCodable {
         .unsigned(UInt64(self))
     }
     
-    public func encodeCBOR() -> Data {
+    public var cborData: Data {
         self.encodeVarInt(.unsigned)
     }
     
-    public static func decodeCBOR(_ cbor: CBOR) throws -> UInt8 {
-        try decodeFixedWidthInteger(cbor)
+    public init(cbor: CBOR) throws {
+        self = try decodeFixedWidthInteger(cbor)
     }
 }
 
@@ -39,12 +39,12 @@ extension UInt16: CBORCodable {
         .unsigned(UInt64(self))
     }
     
-    public func encodeCBOR() -> Data {
+    public var cborData: Data {
         self.encodeVarInt(.unsigned)
     }
     
-    public static func decodeCBOR(_ cbor: CBOR) throws -> UInt16 {
-        try decodeFixedWidthInteger(cbor)
+    public init(cbor: CBOR) throws {
+        self = try decodeFixedWidthInteger(cbor)
     }
 }
 
@@ -53,12 +53,12 @@ extension UInt32: CBORCodable {
         .unsigned(UInt64(self))
     }
 
-    public func encodeCBOR() -> Data {
+    public var cborData: Data {
         self.encodeVarInt(.unsigned)
     }
     
-    public static func decodeCBOR(_ cbor: CBOR) throws -> UInt32 {
-        try decodeFixedWidthInteger(cbor)
+    public init(cbor: CBOR) throws {
+        self = try decodeFixedWidthInteger(cbor)
     }
 }
 
@@ -67,12 +67,12 @@ extension UInt64: CBORCodable {
         .unsigned(UInt64(self))
     }
     
-    public func encodeCBOR() -> Data {
+    public var cborData: Data {
         self.encodeVarInt(.unsigned)
     }
     
-    public static func decodeCBOR(_ cbor: CBOR) throws -> UInt64 {
-        try decodeFixedWidthInteger(cbor)
+    public init(cbor: CBOR) throws {
+        self = try decodeFixedWidthInteger(cbor)
     }
 }
 
@@ -81,12 +81,12 @@ extension UInt: CBORCodable {
         .unsigned(UInt64(self))
     }
     
-    public func encodeCBOR() -> Data {
+    public var cborData: Data {
         self.encodeVarInt(.unsigned)
     }
     
-    public static func decodeCBOR(_ cbor: CBOR) throws -> UInt {
-        try decodeFixedWidthInteger(cbor)
+    public init(cbor: CBOR) throws {
+        self = try decodeFixedWidthInteger(cbor)
     }
 }
 
@@ -99,7 +99,7 @@ extension Int8: CBORCodable {
         }
     }
     
-    public func encodeCBOR() -> Data {
+    public var cborData: Data {
         if self < 0 {
             let b = Int16(self)
             let a = UInt8(-b - 1)
@@ -110,8 +110,8 @@ extension Int8: CBORCodable {
         }
     }
     
-    public static func decodeCBOR(_ cbor: CBOR) throws -> Int8 {
-        try decodeFixedWidthInteger(cbor)
+    public init(cbor: CBOR) throws {
+        self = try decodeFixedWidthInteger(cbor)
     }
 }
 
@@ -124,7 +124,7 @@ extension Int16: CBORCodable {
         }
     }
     
-    public func encodeCBOR() -> Data {
+    public var cborData: Data {
         if self < 0 {
             let b = Int32(self)
             let a = UInt16(-b - 1)
@@ -135,8 +135,8 @@ extension Int16: CBORCodable {
         }
     }
     
-    public static func decodeCBOR(_ cbor: CBOR) throws -> Int16 {
-        try decodeFixedWidthInteger(cbor)
+    public init(cbor: CBOR) throws {
+        self = try decodeFixedWidthInteger(cbor)
     }
 }
 
@@ -149,7 +149,7 @@ extension Int32: CBORCodable {
         }
     }
     
-    public func encodeCBOR() -> Data {
+    public var cborData: Data {
         if self < 0 {
             let b = Int64(self)
             let a = UInt32(-b - 1)
@@ -160,8 +160,8 @@ extension Int32: CBORCodable {
         }
     }
     
-    public static func decodeCBOR(_ cbor: CBOR) throws -> Int32 {
-        try decodeFixedWidthInteger(cbor)
+    public init(cbor: CBOR) throws {
+        self = try decodeFixedWidthInteger(cbor)
     }
 }
 
@@ -174,7 +174,7 @@ extension Int64: CBORCodable {
         }
     }
     
-    public func encodeCBOR() -> Data {
+    public var cborData: Data {
         if self < 0 {
             if self == Int64.min {
                 return UInt64(Int64.max).encodeVarInt(.negative)
@@ -188,8 +188,8 @@ extension Int64: CBORCodable {
         }
     }
     
-    public static func decodeCBOR(_ cbor: CBOR) throws -> Int64 {
-        try decodeFixedWidthInteger(cbor)
+    public init(cbor: CBOR) throws {
+        self = try decodeFixedWidthInteger(cbor)
     }
 }
 
@@ -202,11 +202,11 @@ extension Int: CBORCodable {
         }
     }
 
-    public func encodeCBOR() -> Data {
-        Int64(self).encodeCBOR()
+    public var cborData: Data {
+        Int64(self).cborData
     }
     
-    public static func decodeCBOR(_ cbor: CBOR) throws -> Int {
-        try decodeFixedWidthInteger(cbor)
+    public init(cbor: CBOR) throws {
+        self = try decodeFixedWidthInteger(cbor)
     }
 }

@@ -7,11 +7,11 @@ final class CodingTests: XCTestCase {
         let cbor = t.cbor
         XCTAssertEqual(cbor.debugDescription, expectedDebugDescription)
         XCTAssertEqual(cbor.description, expectedDescription)
-        let data = cbor.encodeCBOR()
+        let data = cbor.cborData
         XCTAssertEqual(data, expectedData.hexData!)
         let decodedCBOR = try! CBOR(data)
         XCTAssertEqual(cbor, decodedCBOR)
-        let decodedT = try! T.decodeCBOR(cbor)
+        let decodedT = try! T(cbor: cbor)
         XCTAssertEqual(t, decodedT)
     }
 
@@ -194,7 +194,7 @@ final class CodingTests: XCTestCase {
         let envelope = CBOR.tagged(200, [alice, knowsBob])
         let cbor = envelope.cbor
         XCTAssertEqual(cbor.description, #"200([200(24("Alice")), 200(221([200(24("knows")), 200(24("Bob"))]))])"#)
-        let bytes = cbor.encodeCBOR()
+        let bytes = cbor.cborData
         XCTAssertEqual(bytes, ‡"d8c882d8c8d81865416c696365d8c8d8dd82d8c8d818656b6e6f7773d8c8d81863426f62")
         let decodedCBOR = try! CBOR(bytes)
         XCTAssertEqual(cbor, decodedCBOR)

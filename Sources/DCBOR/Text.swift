@@ -5,15 +5,15 @@ extension String: CBORCodable {
         .text(self)
     }
     
-    public func encodeCBOR() -> Data {
+    public var cborData: Data {
         let data = self.utf8Data
         return data.count.encodeVarInt(.text) + data
     }
     
-    public static func decodeCBOR(_ cbor: CBOR) throws -> String {
+    public init(cbor: CBOR) throws {
         switch cbor {
         case .text(let string):
-            return string
+            self = string
         default:
             throw CBORDecodingError.wrongType
         }
