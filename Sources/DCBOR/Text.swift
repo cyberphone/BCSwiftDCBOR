@@ -6,7 +6,8 @@ extension String: CBORCodable {
     }
     
     public func encodeCBOR() -> Data {
-        count.encodeVarInt(.text) + self.utf8Data
+        let data = self.utf8Data
+        return data.count.encodeVarInt(.text) + data
     }
     
     public static func decodeCBOR(_ cbor: CBOR) throws -> String {
@@ -14,7 +15,7 @@ extension String: CBORCodable {
         case .text(let string):
             return string
         default:
-            throw DecodeError.wrongType
+            throw CBORDecodingError.wrongType
         }
     }
 }

@@ -1,3 +1,3 @@
 import Foundation
 
-public protocol CBORCodable: CBOREncodable & CBORDecodable, Equatable { }
+public protocol CBORCodable: CBOREncodable & CBORDecodable { }

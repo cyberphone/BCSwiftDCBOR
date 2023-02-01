@@ -1,8 +1,8 @@
 import Foundation
 import WolfBase
 
-extension Date: TaggedCBORCodable {
-    public static let cborTag: UInt64 = 1
+extension Date: CBORTaggedCodable {
+    public static let cborTag: Tag = 1
     
     public var untaggedCBOR: CBOR {
         let timeInterval = timeIntervalSince1970
@@ -24,7 +24,7 @@ extension Date: TaggedCBORCodable {
         case .negative(let n):
             return Date(timeIntervalSince1970: TimeInterval(n))
         default:
-            throw DecodeError.wrongType
+            throw CBORDecodingError.wrongType
         }
     }
 }

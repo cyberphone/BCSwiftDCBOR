@@ -1,17 +1,19 @@
 import Foundation
 
-public protocol TaggedCBORDecodable: CBORDecodable {
-    static var cborTag: UInt64 { get }
+public protocol CBORTaggedDecodable: CBORDecodable {
+    static var cborTag: Tag { get }
     static func decodeUntaggedCBOR(_ cbor: CBOR) throws -> Self
 }
 
-public extension TaggedCBORDecodable {
+public extension CBORTaggedDecodable {
     static func decodeTaggedCBOR(_ cbor: CBOR) throws -> Self {
-        let tagged = try Tagged.decodeCBOR(cbor)
-        guard tagged.tag == cborTag else {
-            throw DecodeError.wrongTag(expected: cborTag, encountered: tagged.tag)
+        guard case CBOR.tagged(let tag, let item) = cbor else {
+            throw CBORDecodingError.wrongType
         }
-        return try Self.decodeUntaggedCBOR(tagged.item)
+        guard tag == cborTag else {
+            throw CBORDecodingError.wrongTag(expected: cborTag, encountered: tag)
+        }
+        return try Self.decodeUntaggedCBOR(item)
     }
     
     static func decodeTaggedCBOR(_ data: Data) throws -> Self {

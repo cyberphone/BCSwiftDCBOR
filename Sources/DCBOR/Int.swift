@@ -6,16 +6,16 @@ func decodeFixedWidthInteger<T: FixedWidthInteger>(_ cbor: CBOR) throws -> T {
     switch cbor {
     case .unsigned(let n):
         guard let n = T(exactly: n) else {
-            throw DecodeError.integerOutOfRange
+            throw CBORDecodingError.integerOutOfRange
         }
         result = n
     case .negative(let n):
         guard let n = T(exactly: n) else {
-            throw DecodeError.integerOutOfRange
+            throw CBORDecodingError.integerOutOfRange
         }
         result = n
     default:
-        throw DecodeError.wrongType
+        throw CBORDecodingError.wrongType
     }
     return result
 }

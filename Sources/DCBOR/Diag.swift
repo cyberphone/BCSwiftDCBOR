@@ -6,9 +6,9 @@ public extension CBOR {
     ///
     /// - Parameters:
     ///   - annotate: If `true`, add additional notes and context.
-    ///   - knownTagNames: If `annotate` is `true`, uses the name of these tags rather than their number.
-    func diagnostic(annotate: Bool = false, knownTagNames: [UInt64: String]? = nil) -> String {
-        diagItem(annotate: annotate, knownTagNames: knownTagNames).format(annotate: annotate)
+    ///   - knownTags: If `annotate` is `true`, uses the name of these tags rather than their number.
+    func diagnostic(annotate: Bool = false, knownTags: KnownTags? = nil) -> String {
+        diagItem(annotate: annotate, knownTags: knownTags).format(annotate: annotate)
     }
 }
 
@@ -139,36 +139,36 @@ enum DiagItem {
 }
 
 extension CBOR {
-    func diagItem(annotate: Bool = false, knownTagNames: [UInt64: String]?) -> DiagItem {
+    func diagItem(annotate: Bool = false, knownTags: KnownTags?) -> DiagItem {
         switch self {
         case .unsigned, .negative, .bytes, .text, .value:
             return .item(description)
-        case .tagged(let tagged):
-            let item: DiagItem
-            if annotate && tagged.tag == 1 {
-                switch tagged.item {
+        case .tagged(let tag, let item):
+            let diagItem: DiagItem
+            if annotate && tag == 1 {
+                switch item {
                 case .unsigned(let n):
-                    item = .item(ISO8601DateFormatter().string(from: Date(timeIntervalSince1970: TimeInterval(n))))
+                    diagItem = .item(ISO8601DateFormatter().string(from: Date(timeIntervalSince1970: TimeInterval(n))))
                 case .negative(let n):
-                    item = .item(ISO8601DateFormatter().string(from: Date(timeIntervalSince1970: TimeInterval(n))))
+                    diagItem = .item(ISO8601DateFormatter().string(from: Date(timeIntervalSince1970: TimeInterval(n))))
                 default:
-                    item = tagged.item.diagItem(annotate: annotate, knownTagNames: knownTagNames)
+                    diagItem = item.diagItem(annotate: annotate, knownTags: knownTags)
                 }
             } else {
-                item = tagged.item.diagItem(annotate: annotate, knownTagNames: knownTagNames)
+                diagItem = item.diagItem(annotate: annotate, knownTags: knownTags)
             }
             return .group(
-                begin: String(tagged.tag) + "(",
+                begin: String(tag.value) + "(",
                 end: ")",
-                items: [item],
+                items: [diagItem],
                 isPairs: false,
-                comment: knownTagNames?[tagged.tag]
+                comment: knownTags?.assignedName(for: tag)
             )
         case .array(let a):
             return .group(
                 begin: "[",
                 end: "]",
-                items: a.map { $0.diagItem(annotate: annotate, knownTagNames: knownTagNames) },
+                items: a.map { $0.diagItem(annotate: annotate, knownTags: knownTags) },
                 isPairs: false,
                 comment: nil
             )
@@ -177,7 +177,7 @@ extension CBOR {
                 begin: "{",
                 end: "}",
                 items: m.map { (key, value) in
-                    [key.diagItem(annotate: annotate, knownTagNames: knownTagNames), value.diagItem(annotate: annotate, knownTagNames: knownTagNames)]
+                    [key.diagItem(annotate: annotate, knownTags: knownTags), value.diagItem(annotate: annotate, knownTags: knownTags)]
                 }.flatMap { $0 },
                 isPairs: true,
                 comment: nil

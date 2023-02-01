@@ -29,3 +29,9 @@ public protocol CBOREncodable {
     /// Returns the value in CBOR binary representation.
     func encodeCBOR() -> Data
 }
+
+public extension CBOREncodable {
+    func encodeCBOR() -> Data {
+        cbor.encodeCBOR()
+    }
+}

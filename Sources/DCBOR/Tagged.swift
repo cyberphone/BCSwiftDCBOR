@@ -2,13 +2,13 @@ import Foundation
 
 /// A CBOR tagged value.
 public struct Tagged: Equatable {
-    /// The tag integer value.
-    public let tag: UInt64
+    /// The tag.
+    public let tag: Tag
     /// The CBOR item that was tagged.
     public let item: CBOR
-    
+
     /// Creates a new tagged value.
-    public init<T>(_ tag: UInt64, _ item: T) where T: CBOREncodable {
+    public init<T>(_ tag: Tag, _ item: T) where T: CBOREncodable {
         self.tag = tag
         self.item = item.cbor
     }
@@ -16,19 +16,19 @@ public struct Tagged: Equatable {
 
 extension Tagged: CBORCodable {
     public var cbor: CBOR {
-        .tagged(self)
+        .tagged(tag, item)
     }
-    
+
     public func encodeCBOR() -> Data {
-        tag.encodeVarInt(.tagged) + item.encodeCBOR()
+        tag.value.encodeVarInt(.tagged) + item.encodeCBOR()
     }
-    
+
     public static func decodeCBOR(_ cbor: CBOR) throws -> Tagged {
         switch cbor {
-        case .tagged(let tagged):
-            return tagged
+        case .tagged(let tag, let item):
+            return Tagged(tag, item)
         default:
-            throw DecodeError.wrongType
+            throw CBORDecodingError.wrongType
         }
     }
 }

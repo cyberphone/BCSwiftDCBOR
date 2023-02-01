@@ -20,7 +20,7 @@ extension Array: CBORDecodable where Element: CBORDecodable {
         case .array(let array):
             return try array.map { try Element.decodeCBOR($0) }
         default:
-            throw DecodeError.wrongType
+            throw CBORDecodingError.wrongType
         }
     }
 }

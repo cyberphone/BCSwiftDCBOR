@@ -15,7 +15,7 @@ extension Data: CBORCodable {
         case .bytes(let data):
             return data
         default:
-            throw DecodeError.wrongType
+            throw CBORDecodingError.wrongType
         }
     }
 }

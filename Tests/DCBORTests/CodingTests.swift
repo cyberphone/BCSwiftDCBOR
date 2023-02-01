@@ -3,7 +3,7 @@ import WolfBase
 import DCBOR
 
 final class CodingTests: XCTestCase {
-    func runTest<T>(_ t: T, _ expectedDebugDescription: String, _ expectedDescription: String, _ expectedData: String) where T: CBORCodable {
+    func runTest<T>(_ t: T, _ expectedDebugDescription: String, _ expectedDescription: String, _ expectedData: String) where T: CBORCodable & Equatable {
         let cbor = t.cbor
         XCTAssertEqual(cbor.debugDescription, expectedDebugDescription)
         XCTAssertEqual(cbor.description, expectedDescription)
@@ -143,7 +143,7 @@ final class CodingTests: XCTestCase {
     func testMisorderedMap() {
         let mapWithOutOfOrderKeys = ‡"a8f4080a011864022003617a046261610581186406812007"
         XCTAssertThrowsError(try CBOR(mapWithOutOfOrderKeys)) {
-            guard case DecodeError.misorderedMapKey = $0 else {
+            guard case CBORDecodingError.misorderedMapKey = $0 else {
                 XCTFail()
                 return
             }
@@ -153,7 +153,7 @@ final class CodingTests: XCTestCase {
     func testDuplicateKey() {
         let mapWithDuplicateKey = ‡"a90a011864022003617a046261610581186406812007f408f408"
         XCTAssertThrowsError(try CBOR(mapWithDuplicateKey)) {
-            guard case DecodeError.duplicateMapKey = $0 else {
+            guard case CBORDecodingError.duplicateMapKey = $0 else {
                 XCTFail()
                 return
             }
@@ -177,7 +177,7 @@ final class CodingTests: XCTestCase {
     func testUnusedData() {
         XCTAssertThrowsError(try CBOR(‡"0001")) {
             guard
-                case DecodeError.unusedData(let remaining) = $0,
+                case CBORDecodingError.unusedData(let remaining) = $0,
                 remaining == 1
             else {
                 XCTFail()
@@ -187,11 +187,11 @@ final class CodingTests: XCTestCase {
     }
     
     func testEnvelope() {
-        let alice = Tagged(200, Tagged(24, "Alice"))
-        let knows = Tagged(200, Tagged(24, "knows"))
-        let bob = Tagged(200, Tagged(24, "Bob"))
-        let knowsBob = Tagged(200, Tagged(221, [knows, bob]))
-        let envelope = Tagged(200, [alice, knowsBob])
+        let alice = CBOR.tagged(200, CBOR.tagged(24, "Alice"))
+        let knows = CBOR.tagged(200, CBOR.tagged(24, "knows"))
+        let bob = CBOR.tagged(200, CBOR.tagged(24, "Bob"))
+        let knowsBob = CBOR.tagged(200, CBOR.tagged(221, [knows, bob]))
+        let envelope = CBOR.tagged(200, [alice, knowsBob])
         let cbor = envelope.cbor
         XCTAssertEqual(cbor.description, #"200([200(24("Alice")), 200(221([200(24("knows")), 200(24("Bob"))]))])"#)
         let bytes = cbor.encodeCBOR()

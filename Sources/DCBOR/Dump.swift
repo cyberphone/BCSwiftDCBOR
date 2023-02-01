@@ -7,12 +7,12 @@ public extension CBOR {
     /// - Parameters:
     ///   - annotate: If `true`, add additional notes and context, otherwise just return a
     ///   straight hexadecimal encoding.
-    ///   - knownTagNames: If `annotate` is `true`, uses the name of these tags rather than their number.
-    func dump(annotate: Bool = false, knownTagNames: [UInt64: String]? = nil) -> String {
+    ///   - knownTags: If `annotate` is `true`, uses the name of these tags rather than their number.
+    func dump(annotate: Bool = false, knownTags: KnownTags? = nil) -> String {
         guard annotate == true else {
             return encodeCBOR().hex
         }
-        let items = dumpItems(level: 0, knownTagNames: knownTagNames)
+        let items = dumpItems(level: 0, knownTags: knownTags)
         let noteColumn = items.reduce(into: 0) { largest, item in
             largest = max(largest, item.formatFirstColumn().count)
         }
@@ -59,7 +59,7 @@ struct DumpItem {
 }
 
 extension CBOR {
-    func dumpItems(level: Int, knownTagNames: [UInt64: String]?) -> [DumpItem] {
+    func dumpItems(level: Int, knownTags: KnownTags?) -> [DumpItem] {
         switch self {
         case .unsigned(let n):
             return [DumpItem(level: level, data: self.encodeCBOR(), note: "unsigned(\(n))")]
@@ -86,10 +86,10 @@ extension CBOR {
             return [
                 DumpItem(level: level, data: data, note: note)
             ]
-        case .tagged(let tagged):
-            let tagHeader = tagged.tag.encodeVarInt(.tagged)
-            var noteComponents: [String] = [ "tag(\(tagged.tag))" ]
-            if let name = knownTagNames?[tagged.tag] {
+        case .tagged(let tag, let item):
+            let tagHeader = tag.value.encodeVarInt(.tagged)
+            var noteComponents: [String] = [ "tag(\(tag))" ]
+            if let name = knownTags?.assignedName(for: tag) {
                 noteComponents.append("  ; \(name)")
             }
             let tagNote = noteComponents.joined(separator: " ")
@@ -97,7 +97,7 @@ extension CBOR {
                 [
                     DumpItem(level: level, data: [Data(of: tagHeader.first!), tagHeader.dropFirst()], note: tagNote)
                 ],
-                tagged.item.dumpItems(level: level + 1, knownTagNames: knownTagNames)
+                item.dumpItems(level: level + 1, knownTags: knownTags)
             ].flatMap { $0 }
         case .array(let array):
             let arrayHeader = array.count.encodeVarInt(.array)
@@ -106,7 +106,7 @@ extension CBOR {
                 [
                     DumpItem(level: level, data: arrayHeaderData, note: String(array.count).flanked("array(", ")"))
                 ],
-                array.flatMap { $0.dumpItems(level: level + 1, knownTagNames: knownTagNames) }
+                array.flatMap { $0.dumpItems(level: level + 1, knownTags: knownTags) }
             ].flatMap { $0 }
         case .map(let m):
             let mapHeader = m.count.encodeVarInt(.map)
@@ -118,8 +118,8 @@ extension CBOR {
                 ],
                 entries.flatMap {
                     [
-                        $0.key.dumpItems(level: level + 1, knownTagNames: knownTagNames),
-                        $0.value.dumpItems(level: level + 1, knownTagNames: knownTagNames)
+                        $0.key.dumpItems(level: level + 1, knownTags: knownTags),
+                        $0.value.dumpItems(level: level + 1, knownTags: knownTags)
                     ].flatMap { $0 }
                 }
             ].flatMap { $0 }

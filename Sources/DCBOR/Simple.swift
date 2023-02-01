@@ -36,7 +36,7 @@ extension Bool: CBORCodable {
         case CBOR.false:
             return false
         default:
-            throw DecodeError.wrongType
+            throw CBORDecodingError.wrongType
         }
     }
 }
@@ -55,7 +55,7 @@ extension Value: CBORCodable {
         case .value(let value):
             return value
         default:
-            throw DecodeError.wrongType
+            throw CBORDecodingError.wrongType
         }
     }
 }

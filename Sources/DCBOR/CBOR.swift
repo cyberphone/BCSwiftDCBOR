@@ -1,5 +1,6 @@
 import Foundation
 import OrderedCollections
+import WolfBase
 
 /// A symbolic representation of CBOR data.
 public indirect enum CBOR {
@@ -16,7 +17,7 @@ public indirect enum CBOR {
     /// Map (major type 5).
     case map(Map)
     /// Tagged value (major type 6).
-    case tagged(Tagged)
+    case tagged(Tag, CBOR)
     /// Simple value (majory type 7).
     case value(Value)
 }
@@ -55,8 +56,8 @@ extension CBOR: CBOREncodable {
             return x.encodeCBOR()
         case .map(let x):
             return x.encodeCBOR()
-        case .tagged(let x):
-            return x.encodeCBOR()
+        case .tagged(let tag, let item):
+            return tag.value.encodeVarInt(.tagged) + item.encodeCBOR()
         case .value(let x):
             return x.encodeCBOR()
         }
@@ -72,7 +73,7 @@ extension CBOR: Equatable {
         case (CBOR.text(let l), CBOR.text(let r)): return l == r
         case (CBOR.array(let l), CBOR.array(let r)): return l == r
         case (CBOR.map(let l), CBOR.map(let r)): return l == r
-        case (CBOR.tagged(let l), CBOR.tagged(let r)): return l == r
+        case (CBOR.tagged(let ltag, let litem), CBOR.tagged(let rtag, let ritem)): return ltag == rtag && litem == ritem
         case (CBOR.value(let l), CBOR.value(let r)): return l == r
         default: return false
         }
@@ -94,8 +95,8 @@ extension CBOR: CustomStringConvertible {
             return x.map({ $0.description }).joined(separator: ", ").flanked("[", "]")
         case .map(let x):
             return x.description
-        case .tagged(let x):
-            return x.description
+        case .tagged(let tag, let item):
+            return "\(tag)(\(item))"
         case .value(let x):
             return x.description
         }
@@ -117,8 +118,8 @@ extension CBOR: CustomDebugStringConvertible {
             return "array(\(x))"
         case .map(let x):
             return "map(\(x.debugDescription))"
-        case .tagged(let x):
-            return "tagged(\(x.tag), \(x.item.debugDescription))"
+        case .tagged(let tag, let item):
+            return "tagged(\(tag), \(item.debugDescription))"
         case .value(let x):
             return "value(\(x.debugDescription))"
         }
@@ -166,5 +167,11 @@ extension CBOR: ExpressibleByStringLiteral {
 extension CBOR: ExpressibleByArrayLiteral {
     public init(arrayLiteral elements: CBOREncodable...) {
         self = (elements.map { $0.cbor }).cbor
+    }
+}
+
+extension CBOR: DataProvider {
+    public var providedData: Data {
+        encodeCBOR()
     }
 }

@@ -1,14 +1,14 @@
 import Foundation
 
-public protocol TaggedCBOREncodable: CBOREncodable {
-    static var cborTag: UInt64 { get }
+public protocol CBORTaggedEncodable: CBOREncodable {
+    static var cborTag: Tag { get }
     var untaggedCBOR: CBOR { get }
     var taggedCBOR: CBOR { get }
 }
 
-public extension TaggedCBOREncodable {
+public extension CBORTaggedEncodable {
     var taggedCBOR: CBOR {
-        CBOR(Tagged(Self.cborTag, untaggedCBOR))
+        CBOR.tagged(Self.cborTag, untaggedCBOR)
     }
     
     var cbor: CBOR {

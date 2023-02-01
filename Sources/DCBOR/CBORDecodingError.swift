@@ -1,7 +1,7 @@
 import Foundation
 
 /// An error encountered while decoding CBOR.
-public enum DecodeError: LocalizedError, Equatable {
+public enum CBORDecodingError: LocalizedError, Equatable {
     /// Early end of data.
     case underrun
 
@@ -36,7 +36,7 @@ public enum DecodeError: LocalizedError, Equatable {
     /// The decoded value did not have the expected tag.
     ///
     /// The case includes the expected tag and encountered tag as associated data.
-    case wrongTag(expected: UInt64, encountered: UInt64)
+    case wrongTag(expected: Tag, encountered: Tag)
     
     case invalidFormat
 }

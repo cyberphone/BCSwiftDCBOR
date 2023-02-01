@@ -5,7 +5,7 @@ func decodeCBOR(_ data: Data) throws -> CBOR {
     let (cbor, len) = try decodeCBORInternal(ArraySlice(data))
     let remaining = data.count - len
     guard remaining == 0 else {
-        throw DecodeError.unusedData(remaining)
+        throw CBORDecodingError.unusedData(remaining)
     }
     return cbor
 }
@@ -52,7 +52,7 @@ func parseHeader(_ header: UInt8) -> (MajorType, UInt8) {
 
 func parseHeaderVarint(_ data: ArraySlice<UInt8>) throws -> (majorType: MajorType, value: UInt64, varIntLen: Int) {
     guard !data.isEmpty else {
-        throw DecodeError.underrun
+        throw CBORDecodingError.underrun
     }
     
     let (majorType, headerValue) = parseHeader(data.at(0))
@@ -65,27 +65,27 @@ func parseHeaderVarint(_ data: ArraySlice<UInt8>) throws -> (majorType: MajorTyp
         varIntLen = 1
     case 24:
         guard dataRemaining >= 1 else {
-            throw DecodeError.underrun
+            throw CBORDecodingError.underrun
         }
         value = UInt64(data.at(1))
         guard value >= 24 else {
-            throw DecodeError.nonCanonicalInt
+            throw CBORDecodingError.nonCanonicalInt
         }
         varIntLen = 2
     case 25:
         guard dataRemaining >= 2 else {
-            throw DecodeError.underrun
+            throw CBORDecodingError.underrun
         }
         value =
             UInt64(data.at(1)) << 8 |
             UInt64(data.at(2))
         guard value > UInt8.max else {
-            throw DecodeError.nonCanonicalInt
+            throw CBORDecodingError.nonCanonicalInt
         }
         varIntLen = 3
     case 26:
         guard dataRemaining >= 4 else {
-            throw DecodeError.underrun
+            throw CBORDecodingError.underrun
         }
         value =
             UInt64(data.at(1)) << 24 |
@@ -93,12 +93,12 @@ func parseHeaderVarint(_ data: ArraySlice<UInt8>) throws -> (majorType: MajorTyp
             UInt64(data.at(3)) << 8 |
             UInt64(data.at(4))
         guard value > UInt16.max else {
-            throw DecodeError.nonCanonicalInt
+            throw CBORDecodingError.nonCanonicalInt
         }
         varIntLen = 5
     case 27:
         guard dataRemaining >= 8 else {
-            throw DecodeError.underrun
+            throw CBORDecodingError.underrun
         }
         let valHi =
             UInt64(data.at(1)) << 56 |
@@ -115,25 +115,25 @@ func parseHeaderVarint(_ data: ArraySlice<UInt8>) throws -> (majorType: MajorTyp
         value = valHi | valLo
         
         guard value > UInt32.max else {
-            throw DecodeError.nonCanonicalInt
+            throw CBORDecodingError.nonCanonicalInt
         }
         varIntLen = 9
     default:
-        throw DecodeError.badHeaderValue(encountered: headerValue)
+        throw CBORDecodingError.badHeaderValue(encountered: headerValue)
     }
     return (majorType, value, varIntLen)
 }
 
 func parseBytes(_ data: ArraySlice<UInt8>, len: Int) throws -> ArraySlice<UInt8> {
     guard !data.isEmpty else {
-        throw DecodeError.underrun
+        throw CBORDecodingError.underrun
     }
     return data.range(0..<len)
 }
 
 func decodeCBORInternal(_ data: ArraySlice<UInt8>) throws -> (cbor: CBOR, len: Int) {
     guard !data.isEmpty else {
-        throw DecodeError.underrun
+        throw CBORDecodingError.underrun
     }
     let (majorType, value, headerVarIntLen) = try parseHeaderVarint(data)
     switch majorType {
@@ -154,7 +154,7 @@ func decodeCBORInternal(_ data: ArraySlice<UInt8>) throws -> (cbor: CBOR, len: I
         let dataLen = Int(value)
         let buf = try parseBytes(data.from(headerVarIntLen), len: dataLen)
         guard let string = String(bytes: buf, encoding: .utf8) else {
-            throw DecodeError.invalidString
+            throw CBORDecodingError.invalidString
         }
         return (string.cbor, headerVarIntLen + dataLen)
     case .array:
@@ -179,8 +179,7 @@ func decodeCBORInternal(_ data: ArraySlice<UInt8>) throws -> (cbor: CBOR, len: I
         return (map.cbor, pos)
     case .tagged:
         let (item, itemLen) = try decodeCBORInternal(data.from(headerVarIntLen))
-        let tagged = Tagged(value, item)
-        return (tagged.cbor, headerVarIntLen + itemLen)
+        return (CBOR.tagged(Tag(value), item), headerVarIntLen + itemLen)
     case .simple:
         return (Value(value).cbor, headerVarIntLen)
     }
