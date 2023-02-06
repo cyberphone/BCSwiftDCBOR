@@ -18,7 +18,7 @@ public indirect enum CBOR {
     case map(Map)
     /// Tagged value (major type 6).
     case tagged(Tag, CBOR)
-    /// Simple value (majory type 7).
+    /// Simple value (major type 7).
     case simple(Value)
 }
 
