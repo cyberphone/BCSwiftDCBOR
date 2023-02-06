@@ -141,7 +141,7 @@ enum DiagItem {
 extension CBOR {
     func diagItem(annotate: Bool = false, knownTags: KnownTags?) -> DiagItem {
         switch self {
-        case .unsigned, .negative, .bytes, .text, .value:
+        case .unsigned, .negative, .bytes, .text, .simple:
             return .item(description)
         case .tagged(let tag, let item):
             let diagItem: DiagItem

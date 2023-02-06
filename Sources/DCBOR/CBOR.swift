@@ -19,7 +19,7 @@ public indirect enum CBOR {
     /// Tagged value (major type 6).
     case tagged(Tag, CBOR)
     /// Simple value (majory type 7).
-    case value(Value)
+    case simple(Value)
 }
 
 public extension CBOR {
@@ -58,7 +58,7 @@ extension CBOR: CBOREncodable {
             return x.cborData
         case .tagged(let tag, let item):
             return tag.value.encodeVarInt(.tagged) + item.cborData
-        case .value(let x):
+        case .simple(let x):
             return x.cborData
         }
     }
@@ -74,7 +74,7 @@ extension CBOR: Equatable {
         case (CBOR.array(let l), CBOR.array(let r)): return l == r
         case (CBOR.map(let l), CBOR.map(let r)): return l == r
         case (CBOR.tagged(let ltag, let litem), CBOR.tagged(let rtag, let ritem)): return ltag == rtag && litem == ritem
-        case (CBOR.value(let l), CBOR.value(let r)): return l == r
+        case (CBOR.simple(let l), CBOR.simple(let r)): return l == r
         default: return false
         }
     }
@@ -97,7 +97,7 @@ extension CBOR: CustomStringConvertible {
             return x.description
         case .tagged(let tag, let item):
             return "\(tag)(\(item))"
-        case .value(let x):
+        case .simple(let x):
             return x.description
         }
     }
@@ -120,7 +120,7 @@ extension CBOR: CustomDebugStringConvertible {
             return "map(\(x.debugDescription))"
         case .tagged(let tag, let item):
             return "tagged(\(tag), \(item.debugDescription))"
-        case .value(let x):
+        case .simple(let x):
             return "value(\(x.debugDescription))"
         }
     }

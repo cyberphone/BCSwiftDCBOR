@@ -80,7 +80,7 @@ extension CBOR {
                 DumpItem(level: level, data: [Data(of: stringHeader.first!), stringHeader.dropFirst()], note: "text(\(s.utf8Data.count))"),
                 DumpItem(level: level + 1, data: s.utf8Data, note: s.flanked("\""))
             ]
-        case .value(let v):
+        case .simple(let v):
             let data = v.cborData
             let note = v.description
             return [

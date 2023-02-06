@@ -43,7 +43,7 @@ extension Bool: CBORCodable {
 
 extension Value: CBORCodable {
     public var cbor: CBOR {
-        .value(self)
+        .simple(self)
     }
     
     public var cborData: Data {
@@ -52,7 +52,7 @@ extension Value: CBORCodable {
     
     public init(cbor: CBOR) throws {
         switch cbor {
-        case .value(let value):
+        case .simple(let value):
             self = value
         default:
             throw CBORDecodingError.wrongType
