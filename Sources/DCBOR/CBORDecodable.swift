@@ -1,7 +1,11 @@
 import Foundation
 
+/// A type that can be decoded from CBOR
 public protocol CBORDecodable {
+    /// Creates an instance of this type from CBOR symbolic representation.
     init(cbor: CBOR) throws
+    
+    /// Creates an instance of this type from encoded CBOR binary data.
     init(cborData: Data) throws
 }
 

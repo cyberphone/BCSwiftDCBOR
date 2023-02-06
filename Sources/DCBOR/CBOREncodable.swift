@@ -1,6 +1,6 @@
 import Foundation
 
-/// A value that can be encoded as CBOR.
+/// A type that can be encoded as CBOR.
 ///
 /// ## Conforming Native Types
 ///

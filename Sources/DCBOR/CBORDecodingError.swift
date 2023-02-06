@@ -38,5 +38,6 @@ public enum CBORDecodingError: LocalizedError, Equatable {
     /// The case includes the expected tag and encountered tag as associated data.
     case wrongTag(expected: Tag, encountered: Tag)
     
+    /// Invalid CBOR format. Frequently thrown by libraries depending on this one.
     case invalidFormat
 }

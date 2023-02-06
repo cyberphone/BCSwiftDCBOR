@@ -2,7 +2,7 @@ import XCTest
 import WolfBase
 import DCBOR
 
-let knownTags = KnownTags([Tag(1, "date")])
+let knownTags = KnownTagsDict([Tag(1, "date")])
 
 final class FormatTests: XCTestCase {
     func literal(_ c: CBOR) -> CBOR { c }
