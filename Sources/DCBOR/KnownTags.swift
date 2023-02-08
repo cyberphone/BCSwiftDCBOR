@@ -1,5 +1,6 @@
 import Foundation
 
+/// A type that can return the name for a tag.
 public protocol KnownTags {
     func assignedName(for tag: Tag) -> String?
     func name(for tag: Tag) -> String
@@ -9,6 +10,7 @@ public func name(for tag: Tag, knownTags: KnownTags?) -> String {
     knownTags?.name(for: tag) ?? String(tag.value)
 }
 
+/// A dictionary of mappings from tags to their names.
 public struct KnownTagsDict: KnownTags {
     var dict: [Tag: String]
     

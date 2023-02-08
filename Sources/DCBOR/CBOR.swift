@@ -121,7 +121,7 @@ extension CBOR: CustomDebugStringConvertible {
         case .tagged(let tag, let item):
             return "tagged(\(tag), \(item.debugDescription))"
         case .simple(let x):
-            return "value(\(x.debugDescription))"
+            return "simple(\(x.debugDescription))"
         }
     }
 }

@@ -33,24 +33,31 @@ final class FormatTests: XCTestCase {
     func testSimpleValues() {
         run([CBOR(nil), CBOR.null, literal(nil)],
             description: "null",
-            debugDescription: "value(null)",
+            debugDescription: "simple(null)",
             diagnostic: "null",
             dump: "f6",
             dumpAnnotated: "f6 # null"
         )
         run([CBOR(true), CBOR.true, true.cbor],
             description: "true",
-            debugDescription: "value(true)",
+            debugDescription: "simple(true)",
             diagnostic: "true",
             dump: "f5",
             dumpAnnotated: "f5 # true"
         )
         run([CBOR(false), CBOR.false, false.cbor],
             description: "false",
-            debugDescription:"value(false)",
+            debugDescription:"simple(false)",
             diagnostic: "false",
             dump: "f4",
             dumpAnnotated: "f4 # false"
+        )
+        run([Value(100).cbor],
+            description: "simple(100)",
+            debugDescription:"simple(100)",
+            diagnostic: "simple(100)",
+            dump: "f864",
+            dumpAnnotated: "f864 # simple(100)"
         )
     }
     
@@ -384,7 +391,7 @@ final class FormatTests: XCTestCase {
         """
         run([CBOR(map)],
             description: #"{10: 1, 100: 2, -1: 3, "z": 4, "aa": 5, [100]: 6, [-1]: 7, false: 8}"#,
-            debugDescription: #"map({0x0a: (unsigned(10), unsigned(1)), 0x1864: (unsigned(100), unsigned(2)), 0x20: (negative(-1), unsigned(3)), 0x617a: (text("z"), unsigned(4)), 0x626161: (text("aa"), unsigned(5)), 0x811864: (array([unsigned(100)]), unsigned(6)), 0x8120: (array([negative(-1)]), unsigned(7)), 0xf4: (value(false), unsigned(8))})"#,
+            debugDescription: #"map({0x0a: (unsigned(10), unsigned(1)), 0x1864: (unsigned(100), unsigned(2)), 0x20: (negative(-1), unsigned(3)), 0x617a: (text("z"), unsigned(4)), 0x626161: (text("aa"), unsigned(5)), 0x811864: (array([unsigned(100)]), unsigned(6)), 0x8120: (array([negative(-1)]), unsigned(7)), 0xf4: (simple(false), unsigned(8))})"#,
             diagnostic: diagnostic,
             dump: "a80a011864022003617a046261610581186406812007f408",
             dumpAnnotated: """

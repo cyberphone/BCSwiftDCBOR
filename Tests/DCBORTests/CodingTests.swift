@@ -135,7 +135,7 @@ final class CodingTests: XCTestCase {
         map.insert("aa", 5)
         map.insert([100], 6)
         runTest(map,
-             #"map({0x0a: (unsigned(10), unsigned(1)), 0x1864: (unsigned(100), unsigned(2)), 0x20: (negative(-1), unsigned(3)), 0x617a: (text("z"), unsigned(4)), 0x626161: (text("aa"), unsigned(5)), 0x811864: (array([unsigned(100)]), unsigned(6)), 0x8120: (array([negative(-1)]), unsigned(7)), 0xf4: (value(false), unsigned(8))})"#,
+             #"map({0x0a: (unsigned(10), unsigned(1)), 0x1864: (unsigned(100), unsigned(2)), 0x20: (negative(-1), unsigned(3)), 0x617a: (text("z"), unsigned(4)), 0x626161: (text("aa"), unsigned(5)), 0x811864: (array([unsigned(100)]), unsigned(6)), 0x8120: (array([negative(-1)]), unsigned(7)), 0xf4: (simple(false), unsigned(8))})"#,
              #"{10: 1, 100: 2, -1: 3, "z": 4, "aa": 5, [100]: 6, [-1]: 7, false: 8}"#,
              "a80a011864022003617a046261610581186406812007f408")
     }
@@ -169,9 +169,9 @@ final class CodingTests: XCTestCase {
     }
     
     func testValue() {
-        runTest(false, "value(false)", "false", "f4")
-        runTest(true, "value(true)", "true", "f5")
-        runTest(Value(100), "value(100)", "simple(100)", "f864")
+        runTest(false, "simple(false)", "false", "f4")
+        runTest(true, "simple(true)", "true", "f5")
+        runTest(Value(100), "simple(100)", "simple(100)", "f864")
     }
     
     func testUnusedData() {

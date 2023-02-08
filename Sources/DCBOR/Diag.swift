@@ -176,9 +176,10 @@ extension CBOR {
             return .group(
                 begin: "{",
                 end: "}",
-                items: m.map { (key, value) in
-                    [key.diagItem(annotate: annotate, knownTags: knownTags), value.diagItem(annotate: annotate, knownTags: knownTags)]
-                }.flatMap { $0 },
+                items: m.map { (key, value) in [
+                    key.diagItem(annotate: annotate, knownTags: knownTags),
+                    value.diagItem(annotate: annotate, knownTags: knownTags)
+                ]}.flatMap { $0 },
                 isPairs: true,
                 comment: nil
             )
