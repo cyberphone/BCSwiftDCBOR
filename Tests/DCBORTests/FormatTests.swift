@@ -30,7 +30,7 @@ final class FormatTests: XCTestCase {
         }
     }
     
-    func testSimpleValues() {
+    func testFormatSimple() {
         run([CBOR(false), CBOR.false, false.cbor],
             description: "false",
             debugDescription:"simple(false)",
@@ -61,7 +61,7 @@ final class FormatTests: XCTestCase {
         )
     }
     
-    func testUnsignedIntegers() {
+    func testFormatUnsigned() {
         run([CBOR(0), 0.cbor, literal(0)],
             description: "0",
             debugDescription: "unsigned(0)",
@@ -95,7 +95,7 @@ final class FormatTests: XCTestCase {
         )
     }
     
-    func testNegativeIntegers() {
+    func testFormatNegative() {
         run([CBOR(-1), (-1).cbor, literal(-1)],
             description: "-1",
             debugDescription: "negative(-1)",
@@ -121,7 +121,7 @@ final class FormatTests: XCTestCase {
         )
     }
     
-    func testString() {
+    func testFormatString() {
         run([CBOR("Test"), "Test".cbor, literal("Test")],
             description: #""Test""#,
             debugDescription: #"text("Test")"#,
@@ -134,7 +134,7 @@ final class FormatTests: XCTestCase {
         )
     }
     
-    func testSimpleArray() {
+    func testFormatSimpleArray() {
         run([CBOR([1, 2, 3]), [1, 2, 3].cbor, literal([1, 2, 3])],
             description: "[1, 2, 3]",
             debugDescription: "array([unsigned(1), unsigned(2), unsigned(3)])",
@@ -149,7 +149,7 @@ final class FormatTests: XCTestCase {
         )
     }
     
-    func testNestedArray() {
+    func testFormatNestedArray() {
         let array: CBOR = [[1, 2, 3], ["A", "B", "C"]]
         run([array, literal([[1, 2, 3], ["A", "B", "C"]])],
             description: #"[[1, 2, 3], ["A", "B", "C"]]"#,
@@ -178,7 +178,7 @@ final class FormatTests: XCTestCase {
         )
     }
     
-    func testMap() {
+    func testFormatMap() {
         var map: Map = [1: "A"]
         map.insert(2, "B")
         run([map.cbor],
@@ -198,7 +198,7 @@ final class FormatTests: XCTestCase {
         )
     }
     
-    func testTagged() {
+    func testFormatTagged() {
         run([CBOR.tagged(100, "Hello")],
             description: #"100("Hello")"#,
             debugDescription: #"tagged(100, text("Hello"))"#,
@@ -212,7 +212,7 @@ final class FormatTests: XCTestCase {
         )
     }
     
-    func testDate() {
+    func testFormatDate() {
         run([CBOR(Date(timeIntervalSince1970: -100))],
             description: "1(-100)",
             debugDescription: "tagged(1, negative(-100))",
@@ -250,7 +250,7 @@ final class FormatTests: XCTestCase {
         )
     }
     
-    func testStructure() throws {
+    func testFormatStructure() throws {
         let encodedCBOR = ‡"d83183015829536f6d65206d7973746572696573206172656e2774206d65616e7420746f20626520736f6c7665642e82d902c3820158402b9238e19eafbc154b49ec89edd4e0fb1368e97332c6913b4beb637d1875824f3e43bd7fb0c41fb574f08ce00247413d3ce2d9466e0ccfa4a89b92504982710ad902c3820158400f9c7af36804ffe5313c00115e5a31aa56814abaa77ff301da53d48613496e9c51a98b36d55f6fb5634fdb0123910cfa4904f1c60523df41013dc3749b377900"
         let diagnostic = """
         49(
@@ -302,7 +302,7 @@ final class FormatTests: XCTestCase {
         )
     }
     
-    func testStructure2() throws {
+    func testFormatStructure2() throws {
         let encodedCBOR = ‡"d9012ca4015059f2293a5bce7d4de59e71b4207ac5d202c11a6035970003754461726b20507572706c652041717561204c6f766504787b4c6f72656d20697073756d20646f6c6f722073697420616d65742c20636f6e73656374657475722061646970697363696e6720656c69742c2073656420646f20656975736d6f642074656d706f7220696e6369646964756e74207574206c61626f726520657420646f6c6f7265206d61676e6120616c697175612e"
         let diagnosticAnnotated = """
         300(
@@ -359,7 +359,7 @@ final class FormatTests: XCTestCase {
     
     /// Ensure that key order conforms to:
     /// https://www.rfc-editor.org/rfc/rfc8949.html#section-4.2.1-2.3.2.1
-    func testKeyOrder() throws {
+    func testFormatKeyOrder() throws {
         var map = Map()
         map[10] = 1
         map[100] = 2
