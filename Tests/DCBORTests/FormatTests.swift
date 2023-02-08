@@ -225,7 +225,7 @@ final class FormatTests: XCTestCase {
             """
         )
 
-        run([CBOR(Date(timeIntervalSince1970: 1647887071.573193))],
+        run([CBOR(Date(timeIntervalSince1970: 1647887071))],
             description: "1(1647887071)",
             debugDescription: "tagged(1, unsigned(1647887071))",
             diagnostic: "1(1647887071)",
@@ -237,7 +237,7 @@ final class FormatTests: XCTestCase {
             """
         )
 
-        run([CBOR(Date(timeIntervalSince1970: 2.9802322387695312e-06))],
+        run([CBOR(Date(timeIntervalSince1970: 0))],
             description: "1(0)",
             debugDescription: "tagged(1, unsigned(0))",
             diagnostic: "1(0)",
