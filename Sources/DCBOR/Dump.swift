@@ -9,7 +9,7 @@ public extension CBOR {
     ///   straight hexadecimal encoding.
     ///   - knownTags: If `annotate` is `true`, uses the name of these tags rather than their number.
     func dump(annotate: Bool = false, knownTags: KnownTags? = nil) -> String {
-        guard annotate == true else {
+        guard annotate else {
             return cborData.hex
         }
         let items = dumpItems(level: 0, knownTags: knownTags)
@@ -66,18 +66,19 @@ extension CBOR {
         case .negative(let n):
             return [DumpItem(level: level, data: self.cborData, note: "negative(\(n))")]
         case .bytes(let d):
-            let note = d.utf8?.sanitized?.flanked("\"")
             var items = [
                 DumpItem(level: level, data: d.count.encodeVarInt(.bytes), note: "bytes(\(d.count))")
             ]
             if !d.isEmpty {
+                let note = d.utf8?.sanitized?.flanked("\"")
                 items.append(DumpItem(level: level + 1, data: d, note: note))
             }
             return items
         case .text(let s):
-            let stringHeader = s.count.encodeVarInt(.text)
+            let header = s.count.encodeVarInt(.text)
+            let headerData = [Data(of: header.first!), header.dropFirst()]
             return [
-                DumpItem(level: level, data: [Data(of: stringHeader.first!), stringHeader.dropFirst()], note: "text(\(s.utf8Data.count))"),
+                DumpItem(level: level, data: headerData, note: "text(\(s.utf8Data.count))"),
                 DumpItem(level: level + 1, data: s.utf8Data, note: s.flanked("\""))
             ]
         case .simple(let v):
@@ -87,7 +88,8 @@ extension CBOR {
                 DumpItem(level: level, data: data, note: note)
             ]
         case .tagged(let tag, let item):
-            let tagHeader = tag.value.encodeVarInt(.tagged)
+            let header = tag.value.encodeVarInt(.tagged)
+            let headerData = [Data(of: header.first!), header.dropFirst()]
             var noteComponents: [String] = [ "tag(\(tag))" ]
             if let name = knownTags?.assignedName(for: tag) {
                 noteComponents.append("  ; \(name)")
@@ -95,28 +97,27 @@ extension CBOR {
             let tagNote = noteComponents.joined(separator: " ")
             return [
                 [
-                    DumpItem(level: level, data: [Data(of: tagHeader.first!), tagHeader.dropFirst()], note: tagNote)
+                    DumpItem(level: level, data: headerData, note: tagNote)
                 ],
                 item.dumpItems(level: level + 1, knownTags: knownTags)
             ].flatMap { $0 }
         case .array(let array):
-            let arrayHeader = array.count.encodeVarInt(.array)
-            let arrayHeaderData = [Data(of: arrayHeader.first!), arrayHeader.dropFirst()]
+            let header = array.count.encodeVarInt(.array)
+            let headerData = [Data(of: header.first!), header.dropFirst()]
             return [
                 [
-                    DumpItem(level: level, data: arrayHeaderData, note: String(array.count).flanked("array(", ")"))
+                    DumpItem(level: level, data: headerData, note: "array(\(array.count))")
                 ],
                 array.flatMap { $0.dumpItems(level: level + 1, knownTags: knownTags) }
             ].flatMap { $0 }
         case .map(let m):
-            let mapHeader = m.count.encodeVarInt(.map)
-            let mapHeaderData = [Data(of: mapHeader.first!), mapHeader.dropFirst()]
-            let entries = m.entries
+            let header = m.count.encodeVarInt(.map)
+            let headerData = [Data(of: header.first!), header.dropFirst()]
             return [
                 [
-                    DumpItem(level: level, data: mapHeaderData, note: String(m.count).flanked("map(", ")"))
+                    DumpItem(level: level, data: headerData, note: "map(\(m.count))")
                 ],
-                entries.flatMap {
+                m.entries.flatMap {
                     [
                         $0.key.dumpItems(level: level + 1, knownTags: knownTags),
                         $0.value.dumpItems(level: level + 1, knownTags: knownTags)

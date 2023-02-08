@@ -31,12 +31,12 @@ final class FormatTests: XCTestCase {
     }
     
     func testSimpleValues() {
-        run([CBOR(nil), CBOR.null, literal(nil)],
-            description: "null",
-            debugDescription: "simple(null)",
-            diagnostic: "null",
-            dump: "f6",
-            dumpAnnotated: "f6 # null"
+        run([CBOR(false), CBOR.false, false.cbor],
+            description: "false",
+            debugDescription:"simple(false)",
+            diagnostic: "false",
+            dump: "f4",
+            dumpAnnotated: "f4 # false"
         )
         run([CBOR(true), CBOR.true, true.cbor],
             description: "true",
@@ -45,12 +45,12 @@ final class FormatTests: XCTestCase {
             dump: "f5",
             dumpAnnotated: "f5 # true"
         )
-        run([CBOR(false), CBOR.false, false.cbor],
-            description: "false",
-            debugDescription:"simple(false)",
-            diagnostic: "false",
-            dump: "f4",
-            dumpAnnotated: "f4 # false"
+        run([CBOR(nil), CBOR.null, literal(nil)],
+            description: "null",
+            debugDescription: "simple(null)",
+            diagnostic: "null",
+            dump: "f6",
+            dumpAnnotated: "f6 # null"
         )
         run([Simple(100).cbor],
             description: "simple(100)",
