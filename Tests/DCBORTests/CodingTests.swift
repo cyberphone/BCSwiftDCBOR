@@ -171,7 +171,7 @@ final class CodingTests: XCTestCase {
     func testValue() {
         runTest(false, "simple(false)", "false", "f4")
         runTest(true, "simple(true)", "true", "f5")
-        runTest(Value(100), "simple(100)", "simple(100)", "f864")
+        runTest(Simple(100), "simple(100)", "simple(100)", "f864")
     }
     
     func testUnusedData() {

@@ -52,7 +52,7 @@ final class FormatTests: XCTestCase {
             dump: "f4",
             dumpAnnotated: "f4 # false"
         )
-        run([Value(100).cbor],
+        run([Simple(100).cbor],
             description: "simple(100)",
             debugDescription:"simple(100)",
             diagnostic: "simple(100)",

@@ -181,6 +181,6 @@ func decodeCBORInternal(_ data: ArraySlice<UInt8>) throws -> (cbor: CBOR, len: I
         let (item, itemLen) = try decodeCBORInternal(data.from(headerVarIntLen))
         return (CBOR.tagged(Tag(value), item), headerVarIntLen + itemLen)
     case .simple:
-        return (Value(value).cbor, headerVarIntLen)
+        return (Simple(value).cbor, headerVarIntLen)
     }
 }

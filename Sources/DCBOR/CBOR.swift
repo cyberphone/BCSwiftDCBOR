@@ -19,16 +19,16 @@ public indirect enum CBOR {
     /// Tagged value (major type 6).
     case tagged(Tag, CBOR)
     /// Simple value (major type 7).
-    case simple(Value)
+    case simple(Simple)
 }
 
 public extension CBOR {
     /// The CBOR symbolic value for `false`.
-    static var `false` = Value(20).cbor
+    static var `false` = Simple(20).cbor
     /// The CBOR symbolic value for `true`.
-    static var `true` = Value(21).cbor
+    static var `true` = Simple(21).cbor
     /// The CBOR symbolic value for `null` (`nil`).
-    static var null = Value(22).cbor
+    static var null = Simple(22).cbor
 
     /// Creates the symbolic CBOR representation of a value conforming to ``CBOREncodable``.
     init<T>(_ x: T) where T: CBOREncodable {

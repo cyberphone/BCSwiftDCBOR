@@ -1,7 +1,7 @@
 import Foundation
 
 /// A CBOR simple value.
-public struct Value: Equatable {
+public struct Simple: Equatable {
     /// The raw value.
     public let rawValue: UInt64
     
@@ -41,7 +41,7 @@ extension Bool: CBORCodable {
     }
 }
 
-extension Value: CBORCodable {
+extension Simple: CBORCodable {
     public var cbor: CBOR {
         .simple(self)
     }
@@ -60,7 +60,7 @@ extension Value: CBORCodable {
     }
 }
 
-extension Value: CustomDebugStringConvertible {
+extension Simple: CustomDebugStringConvertible {
     public var debugDescription: String {
         switch rawValue {
         case 20:
@@ -75,7 +75,7 @@ extension Value: CustomDebugStringConvertible {
     }
 }
 
-extension Value: CustomStringConvertible {
+extension Simple: CustomStringConvertible {
     public var description: String {
         switch rawValue {
         case 20:
