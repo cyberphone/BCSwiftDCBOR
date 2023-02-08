@@ -361,14 +361,14 @@ final class FormatTests: XCTestCase {
     /// https://www.rfc-editor.org/rfc/rfc8949.html#section-4.2.1-2.3.2.1
     func testFormatKeyOrder() throws {
         var map = Map()
-        map[10] = 1
-        map[100] = 2
         map[-1] = 3
+        map[[-1]] = 7
         map["z"] = 4
+        map[10] = 1
+        map[false] = 8
+        map[100] = 2
         map["aa"] = 5
         map[[100]] = 6
-        map[[-1]] = 7
-        map[false] = 8
         let diagnostic = """
         {
            10:
