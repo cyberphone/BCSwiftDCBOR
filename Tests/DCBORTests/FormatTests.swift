@@ -23,10 +23,10 @@ final class FormatTests: XCTestCase {
             XCTAssertEqual(c.diagnostic(annotate: true, knownTags: knownTags), diagnosticAnnotated)
         }
         if let dump {
-            XCTAssertEqual(c.dump(), dump)
+            XCTAssertEqual(c.hex(), dump)
         }
         if let dumpAnnotated {
-            XCTAssertEqual(c.dump(annotate: true, knownTags: knownTags), dumpAnnotated)
+            XCTAssertEqual(c.hex(annotate: true, knownTags: knownTags), dumpAnnotated)
         }
     }
     

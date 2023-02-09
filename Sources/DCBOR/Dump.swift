@@ -2,13 +2,18 @@ import Foundation
 import WolfBase
 
 public extension CBOR {
-    /// Returns the CBOR value as a hex dump.
+    /// Returns the encoded hexadecimal representation of this CBOR.
+    var hex: String {
+        cborData.hex
+    }
+    
+    /// Returns the encoded hexadecimal representation of this CBOR.
     ///
     /// - Parameters:
     ///   - annotate: If `true`, add additional notes and context, otherwise just return a
     ///   straight hexadecimal encoding.
     ///   - knownTags: If `annotate` is `true`, uses the name of these tags rather than their number.
-    func dump(annotate: Bool = false, knownTags: KnownTags? = nil) -> String {
+    func hex(annotate: Bool = false, knownTags: KnownTags? = nil) -> String {
         guard annotate else {
             return cborData.hex
         }
