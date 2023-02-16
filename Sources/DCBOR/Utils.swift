@@ -10,7 +10,7 @@ func toHex(data: Data) -> String {
     }
 }
 
-public func toUTF8(data: Data) -> String? {
+func toUTF8(data: Data) -> String? {
     String(data: data, encoding: .utf8)
 }
 
@@ -19,13 +19,13 @@ extension Data {
         toHex(data: self)
     }
 
-    public var utf8: String? {
+    var utf8: String? {
         toUTF8(data: self)
     }
 }
 
 extension Data {
-    public init<A>(of a: A) {
+    init<A>(of a: A) {
         let d = Swift.withUnsafeBytes(of: a) {
             Data($0)
         }
