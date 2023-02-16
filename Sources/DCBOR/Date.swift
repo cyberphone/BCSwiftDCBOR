@@ -1,5 +1,4 @@
 import Foundation
-import WolfBase
 
 extension Date: CBORTaggedCodable {
     public static let cborTag: Tag = 1

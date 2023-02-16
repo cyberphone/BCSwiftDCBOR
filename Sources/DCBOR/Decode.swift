@@ -1,5 +1,4 @@
 import Foundation
-import WolfBase
 
 func decodeCBOR(_ data: Data) throws -> CBOR {
     let (cbor, len) = try decodeCBORInternal(ArraySlice(data))

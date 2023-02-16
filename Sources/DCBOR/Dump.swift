@@ -1,5 +1,4 @@
 import Foundation
-import WolfBase
 
 public extension CBOR {
     /// Returns the encoded hexadecimal representation of this CBOR.

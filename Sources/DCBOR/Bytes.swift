@@ -1,5 +1,4 @@
 import Foundation
-import WolfBase
 
 extension Data: CBORCodable {
     public var cbor: CBOR {
@@ -7,7 +6,7 @@ extension Data: CBORCodable {
     }
     
     public var cborData: Data {
-        data.count.encodeVarInt(.bytes) + self
+        count.encodeVarInt(.bytes) + self
     }
     
     public init(cbor: CBOR) throws {

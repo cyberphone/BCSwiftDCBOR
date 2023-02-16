@@ -1,6 +1,5 @@
 import Foundation
 import OrderedCollections
-import WolfBase
 
 /// A symbolic representation of CBOR data.
 public indirect enum CBOR {
@@ -162,11 +161,5 @@ extension CBOR: ExpressibleByStringLiteral {
 extension CBOR: ExpressibleByArrayLiteral {
     public init(arrayLiteral elements: CBOREncodable...) {
         self = (elements.map { $0.cbor }).cbor
-    }
-}
-
-extension CBOR: DataProvider {
-    public var providedData: Data {
-        cborData
     }
 }

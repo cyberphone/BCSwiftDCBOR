@@ -16,11 +16,13 @@ let package = Package(
         .target(
             name: "DCBOR",
             dependencies: [
-                "WolfBase",
                 .product(name: "Collections", package: "swift-collections"),
             ]),
         .testTarget(
             name: "DCBORTests",
-            dependencies: ["DCBOR"]),
+            dependencies: [
+                "DCBOR",
+                "WolfBase",
+            ]),
     ]
 )

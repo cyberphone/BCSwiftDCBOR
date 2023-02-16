@@ -1,5 +1,4 @@
 import Foundation
-import WolfBase
 
 func decodeFixedWidthInteger<T: FixedWidthInteger>(_ cbor: CBOR) throws -> T {
     let result: T
