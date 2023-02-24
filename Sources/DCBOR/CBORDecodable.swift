@@ -13,4 +13,11 @@ public extension CBORDecodable {
     init(cborData: Data) throws {
         self = try Self.init(cbor: CBOR(cborData))
     }
+    
+    init?(cbor: CBOR?) throws {
+        guard let cbor else {
+            return nil
+        }
+        try self.init(cbor: cbor)
+    }
 }
