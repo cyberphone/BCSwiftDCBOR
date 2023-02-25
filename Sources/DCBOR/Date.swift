@@ -22,6 +22,8 @@ extension Date: CBORTaggedCodable {
             self = Date(timeIntervalSince1970: TimeInterval(n))
         case .negative(let n):
             self = Date(timeIntervalSince1970: TimeInterval(n))
+        case .simple(.float(let f)):
+            self = Date(timeIntervalSince1970: f)
         default:
             throw CBORDecodingError.wrongType
         }

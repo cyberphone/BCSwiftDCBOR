@@ -180,6 +180,30 @@ func decodeCBORInternal(_ data: ArraySlice<UInt8>) throws -> (cbor: CBOR, len: I
         let (item, itemLen) = try decodeCBORInternal(data.from(headerVarIntLen))
         return (CBOR.tagged(Tag(value), item), headerVarIntLen + itemLen)
     case .simple:
-        return (Simple(value).cbor, headerVarIntLen)
+        switch headerVarIntLen {
+        case 3:
+            let f = Float16(bitPattern: UInt16(value))
+            try f.validateCanonical()
+            return (Simple.float(Double(f)).cbor, headerVarIntLen)
+        case 5:
+            let f = Float(bitPattern: UInt32(value))
+            try f.validateCanonical()
+            return (Simple.float(Double(f)).cbor, headerVarIntLen)
+        case 9:
+            let f = Double(bitPattern: value)
+            try f.validateCanonical()
+            return (Simple.float(f).cbor, headerVarIntLen)
+        default:
+            switch value {
+            case 20:
+                return (CBOR.false, headerVarIntLen)
+            case 21:
+                return (CBOR.true, headerVarIntLen)
+            case 22:
+                return (CBOR.null, headerVarIntLen)
+            default:
+                return (Simple.value(value).cbor, headerVarIntLen)
+            }
+        }
     }
 }

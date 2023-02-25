@@ -1,43 +1,23 @@
 import Foundation
 
 /// A CBOR simple value.
-public struct Simple: Equatable {
-    /// The raw value.
-    public let rawValue: UInt64
-    
-    /// Creates a new CBOR “simple” value.
-    public init(_ rawValue: UInt64) {
-        self.rawValue = rawValue
-    }
-    
-    /// Returns the known name of the value, if it has been assigned one.
-    var name: String {
-        debugDescription
-    }
+public enum Simple: Equatable {
+    /// A numeric value
+    case value(UInt64)
+    /// The boolean value `false`.
+    case `false`
+    /// The boolean value `true`.
+    case `true`
+    /// The value representing `null` (`nil`).
+    case null
+    /// A floating point value.
+    case float(Double)
 }
 
-private let cborFalseEncoded = CBOR.false.cborData
-private let cborTrueEncoded = CBOR.true.cborData
-private let cborNullEncoded = CBOR.null.cborData
-
-extension Bool: CBORCodable {
-    public var cbor: CBOR {
-        self ? CBOR.true : CBOR.false
-    }
-    
-    public var cborData: Data {
-        self ? cborTrueEncoded : cborFalseEncoded
-    }
-    
-    public init(cbor: CBOR) throws {
-        switch cbor {
-        case CBOR.true:
-            self = true
-        case CBOR.false:
-            self = false
-        default:
-            throw CBORDecodingError.wrongType
-        }
+public extension Simple {
+    /// Creates a CBOR simple value from the given numeric value.
+    init(_ v: UInt64) {
+        self = .value(v)
     }
 }
 
@@ -47,13 +27,24 @@ extension Simple: CBORCodable {
     }
     
     public var cborData: Data {
-        rawValue.encodeVarInt(.simple)
+        switch self {
+        case .value(let v):
+            return v.encodeVarInt(.simple)
+        case .false:
+            return 20.encodeVarInt(.simple)
+        case .true:
+            return 21.encodeVarInt(.simple)
+        case .null:
+            return 22.encodeVarInt(.simple)
+        case .float(let n):
+            return n.cborData
+        }
     }
     
     public init(cbor: CBOR) throws {
         switch cbor {
-        case .simple(let value):
-            self = value
+        case .simple(let s):
+            self = s
         default:
             throw CBORDecodingError.wrongType
         }
@@ -62,30 +53,34 @@ extension Simple: CBORCodable {
 
 extension Simple: CustomDebugStringConvertible {
     public var debugDescription: String {
-        switch rawValue {
-        case 20:
+        switch self {
+        case .value(let v):
+            return String(v)
+        case .false:
             return "false"
-        case 21:
+        case .true:
             return "true"
-        case 22:
+        case .null:
             return "null"
-        default:
-            return String(rawValue)
+        case .float(let n):
+            return String(n)
         }
     }
 }
 
 extension Simple: CustomStringConvertible {
     public var description: String {
-        switch rawValue {
-        case 20:
+        switch self {
+        case .value(let v):
+            return "simple(\(v))"
+        case .false:
             return "false"
-        case 21:
+        case .true:
             return "true"
-        case 22:
+        case .null:
             return "null"
-        default:
-            return "simple(\(rawValue))"
+        case .float(let n):
+            return String(n)
         }
     }
 }

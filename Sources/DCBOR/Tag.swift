@@ -1,9 +1,13 @@
 import Foundation
 
+/// A CBOR tag.
 public struct Tag {
+    /// The tag's value.
     public let value: UInt64
+    /// The tag's known name, if any.
     public let name: String?
     
+    /// Creates a tag with the given value, and optionally a known name.
     public init(_ value: UInt64, _ name: String? = nil) {
         self.value = value
         self.name = name

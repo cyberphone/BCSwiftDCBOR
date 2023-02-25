@@ -23,11 +23,11 @@ public indirect enum CBOR {
 
 public extension CBOR {
     /// The CBOR symbolic value for `false`.
-    static var `false` = Simple(20).cbor
+    static let `false` = Bool.cborFalse
     /// The CBOR symbolic value for `true`.
-    static var `true` = Simple(21).cbor
+    static let `true` = Bool.cborTrue
     /// The CBOR symbolic value for `null` (`nil`).
-    static var null = Simple(22).cbor
+    static var null = Simple.null.cbor
 
     /// Creates the symbolic CBOR representation of a value conforming to ``CBOREncodable``.
     init<T>(_ x: T) where T: CBOREncodable {

@@ -12,6 +12,9 @@ public enum CBORDecodingError: LocalizedError, Equatable {
 
     /// An integer was encoded in non-canonical form.
     case nonCanonicalInt
+    
+    /// A floating point value was encoded in non-canonical form.
+    case nonCanonicalFloat
 
     /// An invalidly-encoded UTF-8 string was encountered.
     case invalidString
