@@ -206,41 +206,43 @@ final class CodingTests: XCTestCase {
         runTest(2345678.25,         "simple(2345678.25)",   "2345678.25",   "FA4A0F2B39")
         runTest(1.2,                "simple(1.2)",          "1.2",          "FB3FF3333333333333")
         runTest(Double.infinity,    "simple(inf)",          "inf",          "f97c00")
-
+        
         // Floating point values that can be represented as integers get serialized as integers.
         runTest(Float(42.0),        "unsigned(42)",         "42",           "182A")
         runTest(2345678.0,          "unsigned(2345678)",    "2345678",      "1a0023cace")
         runTest(-2345678.0,         "negative(-2345678)",   "-2345678",     "3A0023CACD")
+        
         // Negative zero gets serialized as integer zero.
         runTest(-0.0,               "unsigned(0)",          "0",            "00")
-        
-        // Int coerced to float
-        do {
-            let n = 42
-            let c = n.cbor
-            let f = try Double(cbor: c)
-            XCTAssertEqual(f, Double(n))
-            let c2 = f.cbor
-            XCTAssertEqual(c2, c)
-            let i = try Int(cbor: c2)
-            XCTAssertEqual(i, n)
-        }
-        
+    }
+    
+    func testIntCoercedToFloat() throws {
+        let n = 42
+        let c = n.cbor
+        let f = try Double(cbor: c)
+        XCTAssertEqual(f, Double(n))
+        let c2 = f.cbor
+        XCTAssertEqual(c2, c)
+        let i = try Int(cbor: c2)
+        XCTAssertEqual(i, n)
+    }
+    
+    func testFailFloatCoercedToInt() throws {
         // Floating point values cannot be coerced to integer types.
-        do {
-            let n = 42.5
-            let c = n.cbor
-            let f = try Double(cbor: c)
-            XCTAssertEqual(f, n)
-            XCTAssertThrowsError(try Int(cbor: c))
-        }
-        
+        let n = 42.5
+        let c = n.cbor
+        let f = try Double(cbor: c)
+        XCTAssertEqual(f, n)
+        XCTAssertThrowsError(try Int(cbor: c))
+    }
+    
+    func testNonCanonicalFloat1() throws {
         // Non-canonical representation of 1.5 that could be represented at a smaller width.
-        do {
-            let f = ‡"FB3FF8000000000000"
-            XCTAssertThrowsError(try CBOR(f))
-        }
-        
+        let f = ‡"FB3FF8000000000000"
+        XCTAssertThrowsError(try CBOR(f))
+    }
+    
+    func testNonCanonicalFloat2() throws {
         // Non-canonical representation of a floating point value that could be represented as an integer.
         do {
             let f = ‡"F94A00" // 12.0
