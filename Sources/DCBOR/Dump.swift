@@ -94,7 +94,7 @@ extension CBOR {
         case .tagged(let tag, let item):
             let header = tag.value.encodeVarInt(.tagged)
             let headerData = [Data(of: header.first!), header.dropFirst()]
-            var noteComponents: [String] = [ "tag(\(tag))" ]
+            var noteComponents: [String] = [ "tag(\(tag.value))" ]
             if let name = knownTags?.assignedName(for: tag) {
                 noteComponents.append("  ; \(name)")
             }
