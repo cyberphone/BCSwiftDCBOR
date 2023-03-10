@@ -1,5 +1,7 @@
 import Foundation
 
+let cborNaN = Data([0xf9, 0x7e, 0x00])
+
 extension Double: CBORCodable {
     public var cbor: CBOR {
         if
@@ -29,7 +31,7 @@ extension Double: CBORCodable {
             throw CBORDecodingError.wrongType
         }
     }
-
+    
     public var cborData: Data {
         let f = Float(self)
         guard self != Double(f) else {
@@ -44,15 +46,19 @@ extension Double: CBORCodable {
         if let i = UInt64(exactly: self) {
             return i.cborData
         }
+        guard !isNaN else {
+            return cborNaN
+        }
         return self.bitPattern.encodeVarInt(.simple)
     }
     
     func validateCanonical() throws {
         guard
             self != Double(Float(self)),
-            Int64(exactly: self) == nil
+            Int64(exactly: self) == nil,
+            !isNaN
         else {
-            throw CBORDecodingError.nonCanonicalFloat
+            throw CBORDecodingError.nonCanonicalNumeric
         }
     }
 }
@@ -101,15 +107,19 @@ extension Float: CBORCodable {
         if let i = UInt64(exactly: self) {
             return i.cborData
         }
+        guard !isNaN else {
+            return cborNaN
+        }
         return self.bitPattern.encodeVarInt(.simple)
     }
     
     func validateCanonical() throws {
         guard
             self != Float(Float16(self)),
-            Int64(exactly: self) == nil
+            Int64(exactly: self) == nil,
+            !isNaN
         else {
-            throw CBORDecodingError.nonCanonicalFloat
+            throw CBORDecodingError.nonCanonicalNumeric
         }
     }
 }
@@ -154,12 +164,18 @@ extension Float16: CBORCodable {
         if let i = UInt64(exactly: self) {
             return i.cborData
         }
+        guard !isNaN else {
+            return cborNaN
+        }
         return self.bitPattern.encodeVarInt(.simple)
     }
     
     func validateCanonical() throws {
-        guard Int64(exactly: self) == nil else {
-            throw CBORDecodingError.nonCanonicalFloat
+        guard
+            Int64(exactly: self) == nil,
+            !isNaN || self.bitPattern == 0x7e00
+        else {
+            throw CBORDecodingError.nonCanonicalNumeric
         }
     }
 }

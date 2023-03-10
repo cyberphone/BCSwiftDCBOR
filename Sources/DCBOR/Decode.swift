@@ -68,7 +68,7 @@ func parseHeaderVarint(_ data: ArraySlice<UInt8>) throws -> (majorType: MajorTyp
         }
         value = UInt64(data.at(1))
         guard value >= 24 else {
-            throw CBORDecodingError.nonCanonicalInt
+            throw CBORDecodingError.nonCanonicalNumeric
         }
         varIntLen = 2
     case 25:
@@ -79,7 +79,7 @@ func parseHeaderVarint(_ data: ArraySlice<UInt8>) throws -> (majorType: MajorTyp
             UInt64(data.at(1)) << 8 |
             UInt64(data.at(2))
         guard value > UInt8.max else {
-            throw CBORDecodingError.nonCanonicalInt
+            throw CBORDecodingError.nonCanonicalNumeric
         }
         varIntLen = 3
     case 26:
@@ -92,7 +92,7 @@ func parseHeaderVarint(_ data: ArraySlice<UInt8>) throws -> (majorType: MajorTyp
             UInt64(data.at(3)) << 8 |
             UInt64(data.at(4))
         guard value > UInt16.max else {
-            throw CBORDecodingError.nonCanonicalInt
+            throw CBORDecodingError.nonCanonicalNumeric
         }
         varIntLen = 5
     case 27:
@@ -114,7 +114,7 @@ func parseHeaderVarint(_ data: ArraySlice<UInt8>) throws -> (majorType: MajorTyp
         value = valHi | valLo
         
         guard value > UInt32.max else {
-            throw CBORDecodingError.nonCanonicalInt
+            throw CBORDecodingError.nonCanonicalNumeric
         }
         varIntLen = 9
     default:

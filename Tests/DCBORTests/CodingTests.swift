@@ -249,4 +249,54 @@ final class CodingTests: XCTestCase {
             XCTAssertThrowsError(try CBOR(f))
         }
     }
+    
+    let canonicalNaNData = ‡"f97e00"
+    let canonicalInfinityData = ‡"f97c00"
+    let canonicalNegativeInfinityData = ‡"f9fc00"
+
+    func testEncodeNaN() throws {
+        let nonstandardDoubleNaN = Double(bitPattern: 0x7ff9100000000001)
+        XCTAssert(nonstandardDoubleNaN.isNaN)
+        XCTAssertEqual(nonstandardDoubleNaN.cborData, canonicalNaNData)
+        
+        let nonstandardFloatNaN = Float(bitPattern: 0xffc00001)
+        XCTAssert(nonstandardFloatNaN.isNaN)
+        XCTAssertEqual(nonstandardFloatNaN.cborData, canonicalNaNData)
+        
+        let nonstandardFloat16NaN = Float16(bitPattern: 0x7e01)
+        XCTAssert(nonstandardFloat16NaN.isNaN)
+        XCTAssertEqual(nonstandardFloat16NaN.cborData, canonicalNaNData)
+    }
+    
+    func testDecodeNaN() throws {
+        // Canonical NaN decodes
+        XCTAssert(try Double(cbor: CBOR(canonicalNaNData)).isNaN)
+        // Non-canonical NaNs of any size throw
+        XCTAssertThrowsError(try CBOR(‡"f97e01"))
+        XCTAssertThrowsError(try CBOR(‡"faffc00001"))
+        XCTAssertThrowsError(try CBOR(‡"fb7ff9100000000001"))
+    }
+    
+    func testEncodeInfinity() throws {
+        XCTAssertEqual(Double.infinity.cborData, canonicalInfinityData)
+        XCTAssertEqual(Float.infinity.cborData, canonicalInfinityData)
+        XCTAssertEqual(Float16.infinity.cborData, canonicalInfinityData)
+        XCTAssertEqual((-Double.infinity).cborData, canonicalNegativeInfinityData)
+        XCTAssertEqual((-Float.infinity).cborData, canonicalNegativeInfinityData)
+        XCTAssertEqual((-Float16.infinity).cborData, canonicalNegativeInfinityData)
+    }
+    
+    func testDecodeInfinity() throws {
+        // Canonical infinity decodes
+        XCTAssert(try Double(cbor: CBOR(canonicalInfinityData)) == Double.infinity)
+        XCTAssert(try Double(cbor: CBOR(canonicalNegativeInfinityData)) == -Double.infinity)
+
+        // Non-canonical +infinities throw
+        XCTAssertThrowsError(try CBOR(‡"fa7f800000"))
+        XCTAssertThrowsError(try CBOR(‡"faff800000"))
+
+        // Non-canonical -infinities throw
+        XCTAssertThrowsError(try CBOR(‡"fb7ff0000000000000"))
+        XCTAssertThrowsError(try CBOR(‡"fbfff0000000000000"))
+    }
 }

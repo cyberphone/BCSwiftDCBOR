@@ -9,12 +9,9 @@ public enum CBORDecodingError: LocalizedError, Equatable {
     ///
     /// The case includes the encountered header as associated data.
     case badHeaderValue(encountered: UInt8)
-
-    /// An integer was encoded in non-canonical form.
-    case nonCanonicalInt
     
-    /// A floating point value was encoded in non-canonical form.
-    case nonCanonicalFloat
+    /// A numeric value was encoded in non-canonical form.
+    case nonCanonicalNumeric
 
     /// An invalidly-encoded UTF-8 string was encountered.
     case invalidString
