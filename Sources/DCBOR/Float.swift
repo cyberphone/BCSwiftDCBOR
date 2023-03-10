@@ -19,9 +19,15 @@ extension Double: CBORCodable {
     public init(cbor: CBOR) throws {
         switch cbor {
         case .unsigned(let n):
-            self = Double(n)
+            guard let f = Double(exactly: n) else {
+                throw CBORDecodingError.outOfRange
+            }
+            self = f
         case .negative(let n):
-            self = Double(n)
+            guard let f = Double(exactly: n) else {
+                throw CBORDecodingError.outOfRange
+            }
+            self = f
         case .simple(let simple):
             guard case .float(let f) = simple else {
                 throw CBORDecodingError.wrongType
@@ -80,14 +86,23 @@ extension Float: CBORCodable {
     public init(cbor: CBOR) throws {
         switch cbor {
         case .unsigned(let n):
-            self = Float(n)
+            guard let f = Float(exactly: n) else {
+                throw CBORDecodingError.outOfRange
+            }
+            self = f
         case .negative(let n):
-            self = Float(n)
+            guard let f = Float(exactly: n) else {
+                throw CBORDecodingError.outOfRange
+            }
+            self = f
         case .simple(let simple):
             guard case .float(let f) = simple else {
                 throw CBORDecodingError.wrongType
             }
-            self = Float(f)
+            guard let f = Float(exactly: f) else {
+                throw CBORDecodingError.outOfRange
+            }
+            self = f
         default:
             throw CBORDecodingError.wrongType
         }
@@ -141,14 +156,23 @@ extension Float16: CBORCodable {
     public init(cbor: CBOR) throws {
         switch cbor {
         case .unsigned(let n):
-            self = Float16(n)
+            guard let f = Float16(exactly: n) else {
+                throw CBORDecodingError.outOfRange
+            }
+            self = f
         case .negative(let n):
-            self = Float16(n)
+            guard let f = Float16(exactly: n) else {
+                throw CBORDecodingError.outOfRange
+            }
+            self = f
         case .simple(let simple):
             guard case .float(let f) = simple else {
                 throw CBORDecodingError.wrongType
             }
-            self = Float16(f)
+            guard let f = Float16(exactly: f) else {
+                throw CBORDecodingError.outOfRange
+            }
+            self = f
         default:
             throw CBORDecodingError.wrongType
         }

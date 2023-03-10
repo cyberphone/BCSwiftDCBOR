@@ -27,8 +27,8 @@ public enum CBORDecodingError: LocalizedError, Equatable {
     /// The decoded CBOR map has a duplicate key.
     case duplicateMapKey
 
-    /// The decoded integer could not be represented in the specified integer type.
-    case integerOutOfRange
+    /// The numeric value could not be represented in the specified numeric type.
+    case outOfRange
 
     /// The decoded value was not the expected type.
     case wrongType
