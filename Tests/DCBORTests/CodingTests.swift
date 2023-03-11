@@ -149,7 +149,7 @@ final class CodingTests: XCTestCase {
     func testMisorderedMap() {
         let mapWithOutOfOrderKeys = ‡"a8f4080a011864022003617a046261610581186406812007"
         XCTAssertThrowsError(try CBOR(mapWithOutOfOrderKeys)) {
-            guard case CBORDecodingError.misorderedMapKey = $0 else {
+            guard case CBORError.misorderedMapKey = $0 else {
                 XCTFail()
                 return
             }
@@ -159,7 +159,7 @@ final class CodingTests: XCTestCase {
     func testDuplicateKey() {
         let mapWithDuplicateKey = ‡"a90a011864022003617a046261610581186406812007f408f408"
         XCTAssertThrowsError(try CBOR(mapWithDuplicateKey)) {
-            guard case CBORDecodingError.duplicateMapKey = $0 else {
+            guard case CBORError.duplicateMapKey = $0 else {
                 XCTFail()
                 return
             }
@@ -183,7 +183,7 @@ final class CodingTests: XCTestCase {
     func testUnusedData() {
         XCTAssertThrowsError(try CBOR(‡"0001")) {
             guard
-                case CBORDecodingError.unusedData(let remaining) = $0,
+                case CBORError.unusedData(let remaining) = $0,
                 remaining == 1
             else {
                 XCTFail()

@@ -13,10 +13,10 @@ public extension CBORTaggedDecodable {
     /// Creates an instance of this type by decoding it from tagged CBOR.
     init(taggedCBOR: CBOR) throws {
         guard case CBOR.tagged(let tag, let item) = taggedCBOR else {
-            throw CBORDecodingError.wrongType
+            throw CBORError.wrongType
         }
         guard tag == Self.cborTag else {
-            throw CBORDecodingError.wrongTag(expected: Self.cborTag, encountered: tag)
+            throw CBORError.wrongTag(expected: Self.cborTag, encountered: tag)
         }
         self = try Self(untaggedCBOR: item)
     }

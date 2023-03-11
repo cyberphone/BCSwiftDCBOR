@@ -28,7 +28,7 @@ extension Tagged: CBORCodable {
         case .tagged(let tag, let item):
             self = Tagged(tag, item)
         default:
-            throw CBORDecodingError.wrongType
+            throw CBORError.wrongType
         }
     }
 }

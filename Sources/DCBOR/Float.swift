@@ -20,21 +20,21 @@ extension Double: CBORCodable {
         switch cbor {
         case .unsigned(let n):
             guard let f = Double(exactly: n) else {
-                throw CBORDecodingError.outOfRange
+                throw CBORError.outOfRange
             }
             self = f
         case .negative(let n):
             guard let f = Double(exactly: n) else {
-                throw CBORDecodingError.outOfRange
+                throw CBORError.outOfRange
             }
             self = f
         case .simple(let simple):
             guard case .float(let f) = simple else {
-                throw CBORDecodingError.wrongType
+                throw CBORError.wrongType
             }
             self = f
         default:
-            throw CBORDecodingError.wrongType
+            throw CBORError.wrongType
         }
     }
     
@@ -64,7 +64,7 @@ extension Double: CBORCodable {
             Int64(exactly: self) == nil,
             !isNaN
         else {
-            throw CBORDecodingError.nonCanonicalNumeric
+            throw CBORError.nonCanonicalNumeric
         }
     }
 }
@@ -87,24 +87,24 @@ extension Float: CBORCodable {
         switch cbor {
         case .unsigned(let n):
             guard let f = Float(exactly: n) else {
-                throw CBORDecodingError.outOfRange
+                throw CBORError.outOfRange
             }
             self = f
         case .negative(let n):
             guard let f = Float(exactly: n) else {
-                throw CBORDecodingError.outOfRange
+                throw CBORError.outOfRange
             }
             self = f
         case .simple(let simple):
             guard case .float(let f) = simple else {
-                throw CBORDecodingError.wrongType
+                throw CBORError.wrongType
             }
             guard let f = Float(exactly: f) else {
-                throw CBORDecodingError.outOfRange
+                throw CBORError.outOfRange
             }
             self = f
         default:
-            throw CBORDecodingError.wrongType
+            throw CBORError.wrongType
         }
     }
 
@@ -134,7 +134,7 @@ extension Float: CBORCodable {
             Int64(exactly: self) == nil,
             !isNaN
         else {
-            throw CBORDecodingError.nonCanonicalNumeric
+            throw CBORError.nonCanonicalNumeric
         }
     }
 }
@@ -157,24 +157,24 @@ extension Float16: CBORCodable {
         switch cbor {
         case .unsigned(let n):
             guard let f = Float16(exactly: n) else {
-                throw CBORDecodingError.outOfRange
+                throw CBORError.outOfRange
             }
             self = f
         case .negative(let n):
             guard let f = Float16(exactly: n) else {
-                throw CBORDecodingError.outOfRange
+                throw CBORError.outOfRange
             }
             self = f
         case .simple(let simple):
             guard case .float(let f) = simple else {
-                throw CBORDecodingError.wrongType
+                throw CBORError.wrongType
             }
             guard let f = Float16(exactly: f) else {
-                throw CBORDecodingError.outOfRange
+                throw CBORError.outOfRange
             }
             self = f
         default:
-            throw CBORDecodingError.wrongType
+            throw CBORError.wrongType
         }
     }
 
@@ -199,7 +199,7 @@ extension Float16: CBORCodable {
             Int64(exactly: self) == nil,
             !isNaN || self.bitPattern == 0x7e00
         else {
-            throw CBORDecodingError.nonCanonicalNumeric
+            throw CBORError.nonCanonicalNumeric
         }
     }
 }

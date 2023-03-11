@@ -15,7 +15,7 @@ extension String: CBORCodable {
         case .text(let string):
             self = string
         default:
-            throw CBORDecodingError.wrongType
+            throw CBORError.wrongType
         }
     }
 }

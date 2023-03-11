@@ -4,7 +4,7 @@ func decodeCBOR(_ data: Data) throws -> CBOR {
     let (cbor, len) = try decodeCBORInternal(ArraySlice(data))
     let remaining = data.count - len
     guard remaining == 0 else {
-        throw CBORDecodingError.unusedData(remaining)
+        throw CBORError.unusedData(remaining)
     }
     return cbor
 }
@@ -51,7 +51,7 @@ func parseHeader(_ header: UInt8) -> (MajorType, UInt8) {
 
 func parseHeaderVarint(_ data: ArraySlice<UInt8>) throws -> (majorType: MajorType, value: UInt64, varIntLen: Int) {
     guard !data.isEmpty else {
-        throw CBORDecodingError.underrun
+        throw CBORError.underrun
     }
     
     let (majorType, headerValue) = parseHeader(data.at(0))
@@ -64,27 +64,27 @@ func parseHeaderVarint(_ data: ArraySlice<UInt8>) throws -> (majorType: MajorTyp
         varIntLen = 1
     case 24:
         guard dataRemaining >= 1 else {
-            throw CBORDecodingError.underrun
+            throw CBORError.underrun
         }
         value = UInt64(data.at(1))
         guard value >= 24 else {
-            throw CBORDecodingError.nonCanonicalNumeric
+            throw CBORError.nonCanonicalNumeric
         }
         varIntLen = 2
     case 25:
         guard dataRemaining >= 2 else {
-            throw CBORDecodingError.underrun
+            throw CBORError.underrun
         }
         value =
             UInt64(data.at(1)) << 8 |
             UInt64(data.at(2))
         guard value > UInt8.max else {
-            throw CBORDecodingError.nonCanonicalNumeric
+            throw CBORError.nonCanonicalNumeric
         }
         varIntLen = 3
     case 26:
         guard dataRemaining >= 4 else {
-            throw CBORDecodingError.underrun
+            throw CBORError.underrun
         }
         value =
             UInt64(data.at(1)) << 24 |
@@ -92,12 +92,12 @@ func parseHeaderVarint(_ data: ArraySlice<UInt8>) throws -> (majorType: MajorTyp
             UInt64(data.at(3)) << 8 |
             UInt64(data.at(4))
         guard value > UInt16.max else {
-            throw CBORDecodingError.nonCanonicalNumeric
+            throw CBORError.nonCanonicalNumeric
         }
         varIntLen = 5
     case 27:
         guard dataRemaining >= 8 else {
-            throw CBORDecodingError.underrun
+            throw CBORError.underrun
         }
         let valHi =
             UInt64(data.at(1)) << 56 |
@@ -114,25 +114,25 @@ func parseHeaderVarint(_ data: ArraySlice<UInt8>) throws -> (majorType: MajorTyp
         value = valHi | valLo
         
         guard value > UInt32.max else {
-            throw CBORDecodingError.nonCanonicalNumeric
+            throw CBORError.nonCanonicalNumeric
         }
         varIntLen = 9
     default:
-        throw CBORDecodingError.badHeaderValue(encountered: headerValue)
+        throw CBORError.badHeaderValue(encountered: headerValue)
     }
     return (majorType, value, varIntLen)
 }
 
 func parseBytes(_ data: ArraySlice<UInt8>, len: Int) throws -> ArraySlice<UInt8> {
     guard !data.isEmpty else {
-        throw CBORDecodingError.underrun
+        throw CBORError.underrun
     }
     return data.range(0..<len)
 }
 
 func decodeCBORInternal(_ data: ArraySlice<UInt8>) throws -> (cbor: CBOR, len: Int) {
     guard !data.isEmpty else {
-        throw CBORDecodingError.underrun
+        throw CBORError.underrun
     }
     let (majorType, value, headerVarIntLen) = try parseHeaderVarint(data)
     switch majorType {
@@ -153,7 +153,7 @@ func decodeCBORInternal(_ data: ArraySlice<UInt8>) throws -> (cbor: CBOR, len: I
         let dataLen = Int(value)
         let buf = try parseBytes(data.from(headerVarIntLen), len: dataLen)
         guard let string = String(bytes: buf, encoding: .utf8) else {
-            throw CBORDecodingError.invalidString
+            throw CBORError.invalidString
         }
         return (string.cbor, headerVarIntLen + dataLen)
     case .array:

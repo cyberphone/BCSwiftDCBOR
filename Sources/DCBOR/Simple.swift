@@ -46,7 +46,7 @@ extension Simple: CBORCodable {
         case .simple(let s):
             self = s
         default:
-            throw CBORDecodingError.wrongType
+            throw CBORError.wrongType
         }
     }
 }

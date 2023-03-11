@@ -24,7 +24,7 @@ public struct Map: Equatable {
     public mutating func insert<K, V>(_ key: K, _ value: V) throws where K: CBOREncodable, V: CBOREncodable {
         let v = value.cbor
         guard v != .null else {
-            throw CBORDecodingError.nullMapValue
+            throw CBORError.nullMapValue
         }
         dict[MapKey(key)] = MapValue(key: key.cbor, value: v)
     }
@@ -49,15 +49,15 @@ public struct Map: Equatable {
         }
         let newKey = MapKey(key)
         guard dict[newKey] == nil else {
-            throw CBORDecodingError.duplicateMapKey
+            throw CBORError.duplicateMapKey
         }
         let entryKey = lastEntry.key
         guard entryKey < newKey else {
-            throw CBORDecodingError.misorderedMapKey
+            throw CBORError.misorderedMapKey
         }
         let v = value.cbor
         guard v != .null else {
-            throw CBORDecodingError.nullMapValue
+            throw CBORError.nullMapValue
         }
         self.dict[newKey] = MapValue(key: key.cbor, value: value.cbor)
     }
@@ -155,7 +155,7 @@ extension Map: CBORCodable {
         case .map(let map):
             self = map
         default:
-            throw CBORDecodingError.wrongType
+            throw CBORError.wrongType
         }
     }
 }

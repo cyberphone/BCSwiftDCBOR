@@ -1,7 +1,7 @@
 import Foundation
 
-/// An error encountered while decoding CBOR.
-public enum CBORDecodingError: LocalizedError, Equatable {
+/// An error decoding or parsing CBOR.
+public enum CBORError: LocalizedError, Equatable {
     /// Early end of data.
     case underrun
 

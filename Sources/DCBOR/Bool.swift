@@ -21,7 +21,7 @@ extension Bool: CBORCodable {
         case Self.cborTrue:
             self = true
         default:
-            throw CBORDecodingError.wrongType
+            throw CBORError.wrongType
         }
     }
 }
