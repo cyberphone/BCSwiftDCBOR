@@ -178,9 +178,9 @@ final class FormatTests: XCTestCase {
         )
     }
     
-    func testFormatMap() {
+    func testFormatMap() throws {
         var map: Map = [1: "A"]
-        map.insert(2, "B")
+        try map.insert(2, "B")
         run([map.cbor],
             description: #"{1: "A", 2: "B"}"#,
             debugDescription: #"map({0x01: (unsigned(1), text("A")), 0x02: (unsigned(2), text("B"))})"#,
