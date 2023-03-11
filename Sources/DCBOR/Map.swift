@@ -59,7 +59,7 @@ public struct Map: Equatable {
         guard v != .null else {
             throw CBORError.nullMapValue
         }
-        self.dict[newKey] = MapValue(key: key.cbor, value: value.cbor)
+        self.dict[newKey] = MapValue(key: key.cbor, value: v)
     }
 
     struct MapValue: Equatable {
