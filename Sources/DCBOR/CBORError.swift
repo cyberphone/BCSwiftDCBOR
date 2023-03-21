@@ -26,9 +26,6 @@ public enum CBORError: LocalizedError, Equatable {
 
     /// The decoded CBOR map has a duplicate key.
     case duplicateMapKey
-    
-    /// The decoded CBOR map has a null value.
-    case nullMapValue
 
     /// The numeric value could not be represented in the specified numeric type.
     case outOfRange

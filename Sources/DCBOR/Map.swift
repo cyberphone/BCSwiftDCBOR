@@ -13,20 +13,16 @@ public struct Map: Equatable {
     }
     
     /// Creates a new CBOR map from the provided sequence of key-value pairs.
-    public init<S>(_ elements: S) throws where S: Sequence, S.Element == (any CBOREncodable, any CBOREncodable) {
+    public init<S>(_ elements: S) where S: Sequence, S.Element == (any CBOREncodable, any CBOREncodable) {
         self.init()
         for (k, v) in elements {
-            try self.insert(k, v)
+            self.insert(k, v)
         }
     }
     
     /// Inserts a key-value pair into the map.
-    public mutating func insert<K, V>(_ key: K, _ value: V) throws where K: CBOREncodable, V: CBOREncodable {
-        let v = value.cbor
-        guard v != .null else {
-            throw CBORError.nullMapValue
-        }
-        dict[MapKey(key)] = MapValue(key: key.cbor, value: v)
+    public mutating func insert<K, V>(_ key: K, _ value: V) where K: CBOREncodable, V: CBOREncodable {
+        dict[MapKey(key)] = MapValue(key: key.cbor, value: value.cbor)
     }
     
     /// Removes the specified key from the map, returning the removed value if any.
@@ -44,7 +40,7 @@ public struct Map: Equatable {
     
     mutating func insertNext<K, V>(_ key: K, _ value: V) throws where K: CBOREncodable, V: CBOREncodable {
         guard let lastEntry = dict.last else {
-            try self.insert(key, value)
+            self.insert(key, value)
             return
         }
         let newKey = MapKey(key)
@@ -55,11 +51,7 @@ public struct Map: Equatable {
         guard entryKey < newKey else {
             throw CBORError.misorderedMapKey
         }
-        let v = value.cbor
-        guard v != .null else {
-            throw CBORError.nullMapValue
-        }
-        self.dict[newKey] = MapValue(key: key.cbor, value: v)
+        self.dict[newKey] = MapValue(key: key.cbor, value: value.cbor)
     }
 
     struct MapValue: Equatable {
@@ -91,7 +83,7 @@ public struct Map: Equatable {
         
         set {
             if let newValue {
-                try! insert(key, newValue)
+                insert(key, newValue)
             } else {
                 _ = remove(key)
             }
@@ -101,7 +93,7 @@ public struct Map: Equatable {
 
 extension Map: ExpressibleByDictionaryLiteral {
     public init(dictionaryLiteral elements: (CBOREncodable, CBOREncodable)...) {
-        try! self.init(elements)
+        self.init(elements)
     }
 }
 

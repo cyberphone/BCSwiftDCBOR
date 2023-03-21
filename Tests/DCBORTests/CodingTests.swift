@@ -126,24 +126,18 @@ final class CodingTests: XCTestCase {
     
     func testMap() throws {
         var map = Map()
-        try map.insert(-1, 3)
-        try map.insert([-1], 7)
-        try map.insert("z", 4)
-        try map.insert(10, 1)
-        try map.insert(false, 8)
-        try map.insert(100, 2)
-        try map.insert("aa", 5)
-        try map.insert([100], 6)
+        map.insert(-1, 3)
+        map.insert([-1], 7)
+        map.insert("z", 4)
+        map.insert(10, 1)
+        map.insert(false, 8)
+        map.insert(100, 2)
+        map.insert("aa", 5)
+        map.insert([100], 6)
         runTest(map,
              #"map({0x0a: (unsigned(10), unsigned(1)), 0x1864: (unsigned(100), unsigned(2)), 0x20: (negative(-1), unsigned(3)), 0x617a: (text("z"), unsigned(4)), 0x626161: (text("aa"), unsigned(5)), 0x811864: (array([unsigned(100)]), unsigned(6)), 0x8120: (array([negative(-1)]), unsigned(7)), 0xf4: (simple(false), unsigned(8))})"#,
              #"{10: 1, 100: 2, -1: 3, "z": 4, "aa": 5, [100]: 6, [-1]: 7, false: 8}"#,
              "a80a011864022003617a046261610581186406812007f408")
-    }
-    
-    func testMapWithNullValuedEntry() {
-        var map = Map()
-        XCTAssertThrowsError(try map.insert(2, CBOR.null))
-        XCTAssertThrowsError(try CBOR(‡"A3010102F60303"))
     }
 
     func testMisorderedMap() {
