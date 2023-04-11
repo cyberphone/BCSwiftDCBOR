@@ -109,7 +109,7 @@ extension Float: CBORCodable {
     }
 
     public var cborData: Data {
-        let f = Float16(self)
+        let f = CBORFloat16(self)
         guard self != Float(f) else {
             return f.cborData
         }
@@ -130,7 +130,7 @@ extension Float: CBORCodable {
     
     func validateCanonical() throws {
         guard
-            self != Float(Float16(self)),
+            self != Float(CBORFloat16(self)),
             Int64(exactly: self) == nil,
             !isNaN
         else {
@@ -139,10 +139,10 @@ extension Float: CBORCodable {
     }
 }
 
-extension Float16: CBORCodable {
+extension CBORFloat16: CBORCodable {
     public var cbor: CBOR {
         if
-            self < 0,
+            Float(self) < 0,
             let i = Int64(exactly: self)
         {
             return i.cbor
@@ -156,12 +156,12 @@ extension Float16: CBORCodable {
     public init(cbor: CBOR) throws {
         switch cbor {
         case .unsigned(let n):
-            guard let f = Float16(exactly: n) else {
+            guard let f = CBORFloat16(exactly: n) else {
                 throw CBORError.outOfRange
             }
             self = f
         case .negative(let n):
-            guard let f = Float16(exactly: n) else {
+            guard let f = CBORFloat16(exactly: n) else {
                 throw CBORError.outOfRange
             }
             self = f
@@ -169,7 +169,7 @@ extension Float16: CBORCodable {
             guard case .float(let f) = simple else {
                 throw CBORError.wrongType
             }
-            guard let f = Float16(exactly: f) else {
+            guard let f = CBORFloat16(exactly: f) else {
                 throw CBORError.outOfRange
             }
             self = f
@@ -180,7 +180,7 @@ extension Float16: CBORCodable {
 
     public var cborData: Data {
         if
-            self < 0,
+            Float(self) < 0,
             let i = Int64(exactly: self)
         {
             return i.cborData

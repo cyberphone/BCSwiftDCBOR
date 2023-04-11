@@ -263,7 +263,7 @@ final class CodingTests: XCTestCase {
         XCTAssert(nonstandardFloatNaN.isNaN)
         XCTAssertEqual(nonstandardFloatNaN.cborData, canonicalNaNData)
         
-        let nonstandardFloat16NaN = Float16(bitPattern: 0x7e01)
+        let nonstandardFloat16NaN = CBORFloat16(bitPattern: 0x7e01)
         XCTAssert(nonstandardFloat16NaN.isNaN)
         XCTAssertEqual(nonstandardFloat16NaN.cborData, canonicalNaNData)
     }
@@ -280,10 +280,10 @@ final class CodingTests: XCTestCase {
     func testEncodeInfinity() throws {
         XCTAssertEqual(Double.infinity.cborData, canonicalInfinityData)
         XCTAssertEqual(Float.infinity.cborData, canonicalInfinityData)
-        XCTAssertEqual(Float16.infinity.cborData, canonicalInfinityData)
+        XCTAssertEqual(CBORFloat16.infinity.cborData, canonicalInfinityData)
         XCTAssertEqual((-Double.infinity).cborData, canonicalNegativeInfinityData)
         XCTAssertEqual((-Float.infinity).cborData, canonicalNegativeInfinityData)
-        XCTAssertEqual((-Float16.infinity).cborData, canonicalNegativeInfinityData)
+        XCTAssertEqual((-CBORFloat16.infinity).cborData, canonicalNegativeInfinityData)
     }
     
     func testDecodeInfinity() throws {

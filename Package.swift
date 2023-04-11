@@ -17,11 +17,13 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/wolfmcnally/swift-collections", .upToNextMajor(from: "1.1.0")),
         .package(url: "https://github.com/wolfmcnally/WolfBase.git", .upToNextMajor(from: "5.0.0")),
+        .package(url: "https://github.com/blockchaincommons/BCSwiftFloat16.git", .upToNextMajor(from: "0.1.1")),
     ],
     targets: [
         .target(
             name: "DCBOR",
             dependencies: [
+                .product(name: "BCFloat16", package: "BCSwiftFloat16"),
                 .product(name: "Collections", package: "swift-collections"),
             ]),
         .testTarget(
