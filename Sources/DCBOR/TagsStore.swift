@@ -1,19 +1,19 @@
 import Foundation
 
 /// A type that can map between tags and their names.
-public protocol KnownTags {
+public protocol TagsStoreProtocol {
     func assignedName(for tag: Tag) -> String?
     func name(for tag: Tag) -> String
     func tag(for value: UInt64) -> Tag?
     func tag(for name: String) -> Tag?
 }
 
-public func name(for tag: Tag, knownTags: KnownTags?) -> String {
+public func name(for tag: Tag, knownTags: TagsStoreProtocol?) -> String {
     knownTags?.name(for: tag) ?? String(tag.value)
 }
 
 /// A dictionary of mappings between tags and their names.
-public struct KnownTagsDict: KnownTags {
+public struct TagsStore: TagsStoreProtocol {
     var tagsByValue: [UInt64: Tag]
     var tagsByName: [String: Tag]
     
@@ -53,7 +53,7 @@ public struct KnownTagsDict: KnownTags {
     }
 }
 
-extension KnownTagsDict: ExpressibleByArrayLiteral {
+extension TagsStore: ExpressibleByArrayLiteral {
     public init(arrayLiteral elements: Tag...) {
         self.init(elements)
     }

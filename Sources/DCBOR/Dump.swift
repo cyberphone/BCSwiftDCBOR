@@ -12,11 +12,11 @@ public extension CBOR {
     ///   - annotate: If `true`, add additional notes and context, otherwise just return a
     ///   straight hexadecimal encoding.
     ///   - knownTags: If `annotate` is `true`, uses the name of these tags rather than their number.
-    func hex(annotate: Bool = false, knownTags: KnownTags? = nil) -> String {
+    func hex(annotate: Bool = false, tags: TagsStoreProtocol? = nil) -> String {
         guard annotate else {
             return cborData.hex
         }
-        let items = dumpItems(level: 0, knownTags: knownTags)
+        let items = dumpItems(level: 0, knownTags: tags)
         let noteColumn = items.reduce(into: 0) { largest, item in
             largest = max(largest, item.formatFirstColumn().count)
         }
@@ -63,7 +63,7 @@ struct DumpItem {
 }
 
 extension CBOR {
-    func dumpItems(level: Int, knownTags: KnownTags?) -> [DumpItem] {
+    func dumpItems(level: Int, knownTags: TagsStoreProtocol?) -> [DumpItem] {
         switch self {
         case .unsigned(let n):
             return [DumpItem(level: level, data: self.cborData, note: "unsigned(\(n))")]

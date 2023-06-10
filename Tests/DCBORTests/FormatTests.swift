@@ -2,7 +2,7 @@ import XCTest
 import WolfBase
 import DCBOR
 
-let knownTags = KnownTagsDict([Tag(1, "date")])
+let knownTags = TagsStore([Tag(1, "date")])
 
 final class FormatTests: XCTestCase {
     func literal(_ c: CBOR) -> CBOR { c }
@@ -20,13 +20,13 @@ final class FormatTests: XCTestCase {
             XCTAssertEqual(c.diagnostic(), diagnostic)
         }
         if let diagnosticAnnotated {
-            XCTAssertEqual(c.diagnostic(annotate: true, knownTags: knownTags), diagnosticAnnotated)
+            XCTAssertEqual(c.diagnostic(annotate: true, tags: knownTags), diagnosticAnnotated)
         }
         if let dump {
             XCTAssertEqual(c.hex(), dump)
         }
         if let dumpAnnotated {
-            XCTAssertEqual(c.hex(annotate: true, knownTags: knownTags), dumpAnnotated)
+            XCTAssertEqual(c.hex(annotate: true, tags: knownTags), dumpAnnotated)
         }
     }
     

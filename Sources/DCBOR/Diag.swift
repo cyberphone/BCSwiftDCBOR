@@ -6,8 +6,8 @@ public extension CBOR {
     /// - Parameters:
     ///   - annotate: If `true`, add additional notes and context.
     ///   - knownTags: If `annotate` is `true`, uses the name of these tags rather than their number.
-    func diagnostic(annotate: Bool = false, knownTags: KnownTags? = nil) -> String {
-        diagItem(annotate: annotate, knownTags: knownTags).format(annotate: annotate)
+    func diagnostic(annotate: Bool = false, tags: TagsStoreProtocol? = nil) -> String {
+        diagItem(annotate: annotate, knownTags: tags).format(annotate: annotate)
     }
 }
 
@@ -138,7 +138,7 @@ enum DiagItem {
 }
 
 extension CBOR {
-    func diagItem(annotate: Bool = false, knownTags: KnownTags?) -> DiagItem {
+    func diagItem(annotate: Bool = false, knownTags: TagsStoreProtocol?) -> DiagItem {
         switch self {
         case .unsigned, .negative, .bytes, .text, .simple:
             return .item(description)
