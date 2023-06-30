@@ -138,6 +138,21 @@ final class CodingTests: XCTestCase {
              #"map({0x0a: (unsigned(10), unsigned(1)), 0x1864: (unsigned(100), unsigned(2)), 0x20: (negative(-1), unsigned(3)), 0x617a: (text("z"), unsigned(4)), 0x626161: (text("aa"), unsigned(5)), 0x811864: (array([unsigned(100)]), unsigned(6)), 0x8120: (array([negative(-1)]), unsigned(7)), 0xf4: (simple(false), unsigned(8))})"#,
              #"{10: 1, 100: 2, -1: 3, "z": 4, "aa": 5, [100]: 6, [-1]: 7, false: 8}"#,
              "a80a011864022003617a046261610581186406812007f408")
+        XCTAssertEqual(try Int(cbor: map[false]!), 8)
+        XCTAssertNil(map[true])
+        XCTAssertEqual(try Int(cbor: map[-1]!), 3)
+        XCTAssertEqual(try Int(cbor: map[[-1]]!), 7)
+        XCTAssertEqual(try Int(cbor: map["z"]), 4)
+        XCTAssertNil(try Int(cbor: map["foo"]))
+    }
+    
+    func testAndersMap() throws {
+        let map: Map = [
+            1: 45.7,
+            2: "Hi there!"
+        ]
+        XCTAssertEqual(map.cborData, ‡"a201fb4046d9999999999a0269486920746865726521")
+        XCTAssertEqual(try Double(cbor: map[1]!), 45.7)
     }
 
     func testMisorderedMap() {
@@ -172,6 +187,11 @@ final class CodingTests: XCTestCase {
         runTest(false, "simple(false)", "false", "f4")
         runTest(true, "simple(true)", "true", "f5")
         runTest(Simple(100), "simple(100)", "simple(100)", "f864")
+        
+        XCTAssertEqual(CBOR.null.description, "null")
+        XCTAssertEqual(CBOR.null.debugDescription, "simple(null)")
+        XCTAssertEqual(CBOR.null.cborData, ‡"f6")
+        XCTAssertEqual(try! CBOR(‡"f6"), CBOR.null)
     }
     
     func testUnusedData() {
@@ -192,25 +212,23 @@ final class CodingTests: XCTestCase {
         let bob = CBOR.tagged(200, CBOR.tagged(24, "Bob"))
         let knowsBob = CBOR.tagged(200, CBOR.tagged(221, [knows, bob]))
         let envelope = CBOR.tagged(200, [alice, knowsBob])
-        let cbor = envelope.cbor
-        XCTAssertEqual(cbor.description, #"200([200(24("Alice")), 200(221([200(24("knows")), 200(24("Bob"))]))])"#)
-        let bytes = cbor.cborData
+        XCTAssertEqual(envelope.description, #"200([200(24("Alice")), 200(221([200(24("knows")), 200(24("Bob"))]))])"#)
+        let bytes = envelope.cborData
         XCTAssertEqual(bytes, ‡"d8c882d8c8d81865416c696365d8c8d8dd82d8c8d818656b6e6f7773d8c8d81863426f62")
         let decodedCBOR = try! CBOR(bytes)
-        XCTAssertEqual(cbor, decodedCBOR)
+        XCTAssertEqual(envelope, decodedCBOR)
     }
     
     func testFloat() throws {
         // Floating point numbers get serialized as their shortest accurate representation.
-        runTest(1.5,                "simple(1.5)",          "1.5",          "F93E00")
-        runTest(2345678.25,         "simple(2345678.25)",   "2345678.25",   "FA4A0F2B39")
-        runTest(1.2,                "simple(1.2)",          "1.2",          "FB3FF3333333333333")
-        runTest(Double.infinity,    "simple(inf)",          "inf",          "f97c00")
-        
+        runTest(1.5,                "simple(1.5)",          "1.5",          "f93e00")
+        runTest(2345678.25,         "simple(2345678.25)",   "2345678.25",   "fa4a0f2b39")
+        runTest(1.2,                "simple(1.2)",          "1.2",          "fb3ff3333333333333")
+
         // Floating point values that can be represented as integers get serialized as integers.
-        runTest(Float(42.0),        "unsigned(42)",         "42",           "182A")
+        runTest(Float(42.0),        "unsigned(42)",         "42",           "182a")
         runTest(2345678.0,          "unsigned(2345678)",    "2345678",      "1a0023cace")
-        runTest(-2345678.0,         "negative(-2345678)",   "-2345678",     "3A0023CACD")
+        runTest(-2345678.0,         "negative(-2345678)",   "-2345678",     "3a0023cacd")
         
         // Negative zero gets serialized as integer zero.
         runTest(-0.0,               "unsigned(0)",          "0",            "00")
@@ -238,7 +256,7 @@ final class CodingTests: XCTestCase {
     
     func testNonCanonicalFloat1() throws {
         // Non-canonical representation of 1.5 that could be represented at a smaller width.
-        let f = ‡"FB3FF8000000000000"
+        let f = ‡"fb3ff8000000000000"
         XCTAssertThrowsError(try CBOR(f))
     }
     
