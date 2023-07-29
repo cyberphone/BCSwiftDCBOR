@@ -46,16 +46,22 @@ enum DiagItem {
         }
     }
     
-    private func formatLine(level: Int, string: String, separator: String = "") -> String {
-        String(repeating: " ", count: level * 3) + string + separator
+    private func formatLine(level: Int, string: String, separator: String = "", comment: String? = nil) -> String {
+        var result = String(repeating: " ", count: level * 3) + string + separator
+        if let comment {
+            result += "   ; \(comment)"
+        }
+        return result
     }
     
     func singleLineComposition(level: Int, separator: String, annotate: Bool) -> String {
         let string: String
+        let comment: String?
         switch self {
         case .item(let s):
             string = s
-        case .group(let begin, let end, let items, let isPairs, let comment):
+            comment = nil
+        case .group(let begin, let end, let items, let isPairs, let comm):
             let components = items.map { item -> String in
                 switch item {
                 case .item(let string):
@@ -65,14 +71,10 @@ enum DiagItem {
                 }
             }
             let pairSeparator = isPairs ? ": " : ", "
-            let s = components.joined(itemSeparator: ", ", pairSeparator: pairSeparator).flanked(begin, end)
-            if annotate, let comment = comment {
-                string = "\(s)   ; \(comment)"
-            } else {
-                string = s
-            }
+            string = components.joined(itemSeparator: ", ", pairSeparator: pairSeparator).flanked(begin, end)
+            comment = comm
         }
-        return formatLine(level: level, string: string, separator: separator)
+        return formatLine(level: level, string: string, separator: separator, comment: comment)
     }
     
     func multilineComposition(level: Int, separator: String, annotate: Bool) -> String {
@@ -81,13 +83,7 @@ enum DiagItem {
             return string
         case .group(let begin, let end, let items, let isPairs, let comment):
             var lines: [String] = []
-            var b: String
-            if annotate, let comment = comment {
-                b = "\(begin)   ; \(comment)"
-            } else {
-                b = begin
-            }
-            lines.append(formatLine(level: level, string: b))
+            lines.append(formatLine(level: level, string: begin, comment: comment))
             for (index, item) in items.enumerated() {
                 let separator = index == items.count - 1 ? "" : (isPairs && index & 1 == 0 ? ":" : ",")
                 lines.append(item.format(level: level + 1, separator: separator, annotate: annotate))
