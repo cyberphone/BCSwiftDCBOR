@@ -8,6 +8,10 @@ public protocol CBORTaggedEncodable: CBOREncodable {
     static var cborTag: Tag { get }
     var untaggedCBOR: CBOR { get }
     var taggedCBOR: CBOR { get }
+    
+    // Overrdiable from CBOREncodable
+    var cbor: CBOR { get }
+    var cborData: Data { get }
 }
 
 public extension CBORTaggedEncodable {

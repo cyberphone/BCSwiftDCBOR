@@ -7,6 +7,9 @@ import Foundation
 public protocol CBORTaggedDecodable: CBORDecodable {
     static var cborTag: Tag { get }
     init(untaggedCBOR: CBOR) throws
+    
+    // Overridable from CBORDecodable
+    init(cbor: CBOR) throws
 }
 
 public extension CBORTaggedDecodable {
