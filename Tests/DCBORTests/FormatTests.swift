@@ -217,10 +217,10 @@ final class FormatTests: XCTestCase {
             description: "1(-100)",
             debugDescription: "tagged(1, negative(-100))",
             diagnostic: "1(-100)",
-            diagnosticAnnotated: "1(1969-12-31T23:58:20Z)   ; date",
+            diagnosticAnnotated: "1(1969-12-31T23:58:20Z)   / date /",
             dump: "c13863",
             dumpAnnotated: """
-            c1      # tag(1)   ; date
+            c1      # tag(1) date
                3863 # negative(-100)
             """
         )
@@ -229,10 +229,10 @@ final class FormatTests: XCTestCase {
             description: "1(1647887071)",
             debugDescription: "tagged(1, unsigned(1647887071))",
             diagnostic: "1(1647887071)",
-            diagnosticAnnotated: "1(2022-03-21T18:24:31Z)   ; date",
+            diagnosticAnnotated: "1(2022-03-21T18:24:31Z)   / date /",
             dump: "c11a6238c2df",
             dumpAnnotated: """
-            c1            # tag(1)   ; date
+            c1            # tag(1) date
                1a6238c2df # unsigned(1647887071)
             """
         )
@@ -241,10 +241,10 @@ final class FormatTests: XCTestCase {
             description: "1(0)",
             debugDescription: "tagged(1, unsigned(0))",
             diagnostic: "1(0)",
-            diagnosticAnnotated: "1(1970-01-01T00:00:00Z)   ; date",
+            diagnosticAnnotated: "1(1970-01-01T00:00:00Z)   / date /",
             dump: "c100",
             dumpAnnotated: """
-            c1    # tag(1)   ; date
+            c1    # tag(1) date
                00 # unsigned(0)
             """
         )
@@ -310,7 +310,7 @@ final class FormatTests: XCTestCase {
               1:
               h'59f2293a5bce7d4de59e71b4207ac5d2',
               2:
-              1(2021-02-24T00:00:00Z),   ; date
+              1(2021-02-24T00:00:00Z),   / date /
               3:
               "Dark Purple Aqua Love",
               4:
@@ -345,7 +345,7 @@ final class FormatTests: XCTestCase {
                   50                                 # bytes(16)
                      59f2293a5bce7d4de59e71b4207ac5d2
                   02                                 # unsigned(2)
-                  c1                                 # tag(1)   ; date
+                  c1                                 # tag(1) date
                      1a60359700                      # unsigned(1614124800)
                   03                                 # unsigned(3)
                   75                                 # text(21)

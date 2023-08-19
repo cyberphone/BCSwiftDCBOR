@@ -49,7 +49,7 @@ enum DiagItem {
     private func formatLine(level: Int, string: String, separator: String = "", comment: String? = nil) -> String {
         var result = String(repeating: " ", count: level * 3) + string + separator
         if let comment {
-            result += "   ; \(comment)"
+            result += "   / \(comment) /"
         }
         return result
     }

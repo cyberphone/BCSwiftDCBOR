@@ -96,7 +96,7 @@ extension CBOR {
             let headerData = [Data(of: header.first!), header.dropFirst()]
             var noteComponents: [String] = [ "tag(\(tag.value))" ]
             if let name = knownTags?.assignedName(for: tag) {
-                noteComponents.append("  ; \(name)")
+                noteComponents.append(name)
             }
             let tagNote = noteComponents.joined(separator: " ")
             return [
