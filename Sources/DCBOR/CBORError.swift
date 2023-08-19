@@ -12,6 +12,9 @@ public enum CBORError: LocalizedError, Equatable {
     
     /// A numeric value was encoded in non-canonical form.
     case nonCanonicalNumeric
+    
+    /// An invalid simple value was encountered.
+    case invalidSimple
 
     /// An invalidly-encoded UTF-8 string was encountered.
     case invalidString

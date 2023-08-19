@@ -3,7 +3,7 @@ import Foundation
 /// A CBOR simple value.
 public enum Simple: Equatable {
     /// A numeric value
-    case value(UInt64)
+    //case value(UInt64)
     /// The boolean value `false`.
     case `false`
     /// The boolean value `true`.
@@ -16,9 +16,9 @@ public enum Simple: Equatable {
 
 public extension Simple {
     /// Creates a CBOR simple value from the given numeric value.
-    init(_ v: UInt64) {
-        self = .value(v)
-    }
+    //init(_ v: UInt64) {
+    //    self = .value(v)
+    //}
 }
 
 extension Simple: CBORCodable {
@@ -28,8 +28,8 @@ extension Simple: CBORCodable {
     
     public var cborData: Data {
         switch self {
-        case .value(let v):
-            return v.encodeVarInt(.simple)
+        //case .value(let v):
+        //    return v.encodeVarInt(.simple)
         case .false:
             return 20.encodeVarInt(.simple)
         case .true:
@@ -54,8 +54,8 @@ extension Simple: CBORCodable {
 extension Simple: CustomDebugStringConvertible {
     public var debugDescription: String {
         switch self {
-        case .value(let v):
-            return String(v)
+        //case .value(let v):
+        //    return String(v)
         case .false:
             return "false"
         case .true:
@@ -71,8 +71,8 @@ extension Simple: CustomDebugStringConvertible {
 extension Simple: CustomStringConvertible {
     public var description: String {
         switch self {
-        case .value(let v):
-            return "simple(\(v))"
+        //case .value(let v):
+        //    return "simple(\(v))"
         case .false:
             return "false"
         case .true:

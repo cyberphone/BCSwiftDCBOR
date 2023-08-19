@@ -52,13 +52,13 @@ final class FormatTests: XCTestCase {
             dump: "f6",
             dumpAnnotated: "f6 # null"
         )
-        run([Simple(100).cbor],
-            description: "simple(100)",
-            debugDescription:"simple(100)",
-            diagnostic: "simple(100)",
-            dump: "f864",
-            dumpAnnotated: "f864 # simple(100)"
-        )
+//        run([Simple(100).cbor],
+//            description: "simple(100)",
+//            debugDescription:"simple(100)",
+//            diagnostic: "simple(100)",
+//            dump: "f864",
+//            dumpAnnotated: "f864 # simple(100)"
+//        )
     }
     
     func testFormatUnsigned() {

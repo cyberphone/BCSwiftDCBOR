@@ -202,7 +202,8 @@ func decodeCBORInternal(_ data: ArraySlice<UInt8>) throws -> (cbor: CBOR, len: I
             case 22:
                 return (CBOR.null, headerVarIntLen)
             default:
-                return (Simple.value(value).cbor, headerVarIntLen)
+                throw CBORError.invalidSimple
+                //return (Simple.value(value).cbor, headerVarIntLen)
             }
         }
     }
