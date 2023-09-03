@@ -224,7 +224,7 @@ final class FormatTests: XCTestCase {
                3863 # negative(-100)
             """
         )
-
+        
         run([CBOR(Date(timeIntervalSince1970: 1647887071))],
             description: "1(1647887071)",
             debugDescription: "tagged(1, unsigned(1647887071))",
@@ -236,7 +236,7 @@ final class FormatTests: XCTestCase {
                1a6238c2df # unsigned(1647887071)
             """
         )
-
+        
         run([CBOR(Date(timeIntervalSince1970: 0))],
             description: "1(0)",
             debugDescription: "tagged(1, unsigned(0))",
@@ -246,6 +246,20 @@ final class FormatTests: XCTestCase {
             dumpAnnotated: """
             c1    # tag(1) date
                00 # unsigned(0)
+            """
+        )
+    }
+    
+    func testFormatFractionalDate() {
+        run([CBOR(Date(timeIntervalSince1970: 0.5))],
+            description: "1(0.5)",
+            debugDescription: "tagged(1, simple(0.5))",
+            diagnostic: "1(0.5)",
+            diagnosticAnnotated: "1(1970-01-01T00:00:00Z)   / date /",
+            dump: "c1f93800",
+            dumpAnnotated: """
+            c1        # tag(1) date
+               f93800 # 0.5
             """
         )
     }

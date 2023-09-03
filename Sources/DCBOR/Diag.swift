@@ -141,12 +141,9 @@ extension CBOR {
         case .tagged(let tag, let item):
             let diagItem: DiagItem
             if annotate && tag == 1 {
-                switch item {
-                case .unsigned(let n):
+                if let n = try? Double(cbor: item) {
                     diagItem = .item(ISO8601DateFormatter().string(from: Date(timeIntervalSince1970: TimeInterval(n))))
-                case .negative(let n):
-                    diagItem = .item(ISO8601DateFormatter().string(from: Date(timeIntervalSince1970: TimeInterval(n))))
-                default:
+                } else {
                     diagItem = item.diagItem(annotate: annotate, knownTags: knownTags)
                 }
             } else {

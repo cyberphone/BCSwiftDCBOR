@@ -4,28 +4,10 @@ extension Date: CBORTaggedCodable {
     public static let cborTag: Tag = 1
     
     public var untaggedCBOR: CBOR {
-        let timeInterval = timeIntervalSince1970
-        let (integral, _) = modf(timeInterval)
-
-        let seconds = Int64(integral)
-
-        if seconds < 0 {
-            return CBOR(Int(timeInterval))
-        } else {
-            return CBOR(UInt(seconds))
-        }
+        CBOR(timeIntervalSince1970)
     }
     
     public init(untaggedCBOR: CBOR) throws {
-        switch untaggedCBOR {
-        case .unsigned(let n):
-            self = Date(timeIntervalSince1970: TimeInterval(n))
-        case .negative(let n):
-            self = Date(timeIntervalSince1970: TimeInterval(n))
-        case .simple(.float(let f)):
-            self = Date(timeIntervalSince1970: f)
-        default:
-            throw CBORError.wrongType
-        }
+        self = try Date(timeIntervalSince1970: TimeInterval(cbor: untaggedCBOR))
     }
 }
