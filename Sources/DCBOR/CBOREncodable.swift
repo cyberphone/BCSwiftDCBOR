@@ -4,7 +4,7 @@ import Foundation
 ///
 /// ## Conforming Native Types
 ///
-/// In addition to types defined in this package like ``Map``, ``Tagged``, and ``Value``, the following
+/// In addition to types defined in this package like ``Map``, and ``Tagged``, the following
 /// native types also conform to ``CBOREncodable``:
 ///
 /// * `Array where Element: CBOREncodable`
