@@ -5,7 +5,7 @@ import Foundation
 /// Typically types that conform to this protocol will only provide the
 /// `cborTag` static attribute and the `untaggedCBOR` instance attribute.
 public protocol CBORTaggedEncodable: CBOREncodable {
-    static var cborTag: Tag { get }
+    static var cborTags: [Tag] { get }
     var untaggedCBOR: CBOR { get }
     var taggedCBOR: CBOR { get }
     
@@ -16,7 +16,7 @@ public protocol CBORTaggedEncodable: CBOREncodable {
 
 public extension CBORTaggedEncodable {
     var taggedCBOR: CBOR {
-        CBOR.tagged(Self.cborTag, untaggedCBOR)
+        CBOR.tagged(Self.cborTags.first!, untaggedCBOR)
     }
     
     /// This override specifies that the default CBOR encoding will be tagged.

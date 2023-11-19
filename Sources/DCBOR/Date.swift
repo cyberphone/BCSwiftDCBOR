@@ -1,7 +1,7 @@
 import Foundation
 
 extension Date: CBORTaggedCodable {
-    public static let cborTag: Tag = 1
+    public static let cborTags: [Tag] = [1]
     
     public var untaggedCBOR: CBOR {
         CBOR(timeIntervalSince1970)

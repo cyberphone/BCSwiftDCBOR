@@ -76,9 +76,9 @@ public struct Map: Equatable {
     }
     
     /// Gets or sets the value for the given key.
-    public subscript<T>(key: T) -> CBOR? where T: CBOREncodable {
+    public subscript<K, V>(key: K) -> V? where K: CBOREncodable, V: CBORCodable {
         get {
-            dict[MapKey(key)]?.value
+            try? V(cbor: dict[MapKey(key)]?.value)
         }
         
         set {

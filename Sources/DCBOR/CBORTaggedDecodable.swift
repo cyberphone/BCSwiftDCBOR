@@ -5,7 +5,7 @@ import Foundation
 /// Typically types that conform to this protocol will provide the `cborTag`
 /// static attribute and the `init(untaggedCBOR:)` constructor.
 public protocol CBORTaggedDecodable: CBORDecodable {
-    static var cborTag: Tag { get }
+    static var cborTags: [Tag] { get }
     init(untaggedCBOR: CBOR) throws
     
     // Overridable from CBORDecodable
@@ -13,13 +13,18 @@ public protocol CBORTaggedDecodable: CBORDecodable {
 }
 
 public extension CBORTaggedDecodable {
+    static var cborTag: Tag {
+        cborTags.first!
+    }
+    
     /// Creates an instance of this type by decoding it from tagged CBOR.
     init(taggedCBOR: CBOR) throws {
         guard case CBOR.tagged(let tag, let item) = taggedCBOR else {
             throw CBORError.wrongType
         }
-        guard tag == Self.cborTag else {
-            throw CBORError.wrongTag(expected: Self.cborTag, encountered: tag)
+        let tags = Self.cborTags
+        guard tags.contains(tag) else {
+            throw CBORError.wrongTag(expected: tags.first!, encountered: tag)
         }
         self = try Self(untaggedCBOR: item)
     }

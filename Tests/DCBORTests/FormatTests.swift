@@ -17,13 +17,13 @@ final class FormatTests: XCTestCase {
             XCTAssertEqual(c.debugDescription, debugDescription)
         }
         if let diagnostic {
-            XCTAssertEqual(c.diagnostic(), diagnostic)
+            XCTAssertEqual(c.diagnostic(annotate: false), diagnostic)
         }
         if let diagnosticAnnotated {
             XCTAssertEqual(c.diagnostic(annotate: true, tags: knownTags), diagnosticAnnotated)
         }
         if let dump {
-            XCTAssertEqual(c.hex(), dump)
+            XCTAssertEqual(c.hex(annotate: false), dump)
         }
         if let dumpAnnotated {
             XCTAssertEqual(c.hex(annotate: true, tags: knownTags), dumpAnnotated)
