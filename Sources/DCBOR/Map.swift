@@ -75,6 +75,10 @@ public struct Map: Equatable {
         }
     }
     
+    public func get<K>(_ key: K) -> CBOR? where K: CBOREncodable {
+        dict[MapKey(key)]?.value
+    }
+    
     /// Gets or sets the value for the given key.
     public subscript<K, V>(key: K) -> V? where K: CBOREncodable, V: CBORCodable {
         get {
