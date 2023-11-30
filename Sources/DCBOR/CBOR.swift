@@ -63,6 +63,14 @@ extension CBOR: CBOREncodable {
     }
 }
 
+extension CBOR: CBORDecodable {
+    public init(cbor: CBOR) throws {
+        self = cbor
+    }
+}
+
+extension CBOR: CBORCodable { }
+
 extension CBOR: Equatable {
     public static func ==(lhs: CBOR, rhs: CBOR) -> Bool {
         switch (lhs, rhs) {

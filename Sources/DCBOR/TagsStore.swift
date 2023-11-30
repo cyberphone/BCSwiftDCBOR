@@ -58,3 +58,5 @@ extension TagsStore: ExpressibleByArrayLiteral {
         self.init(elements)
     }
 }
+
+public var globalTags = TagsStore()

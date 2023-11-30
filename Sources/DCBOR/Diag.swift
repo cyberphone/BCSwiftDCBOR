@@ -6,7 +6,7 @@ public extension CBOR {
     /// - Parameters:
     ///   - annotate: If `true`, add additional notes and context.
     ///   - knownTags: If `annotate` is `true`, uses the name of these tags rather than their number.
-    func diagnostic(annotate: Bool = true, tags: TagsStoreProtocol? = nil) -> String {
+    func diagnostic(annotate: Bool = true, tags: TagsStoreProtocol? = globalTags) -> String {
         diagItem(annotate: annotate, knownTags: tags).format(annotate: annotate)
     }
 }
