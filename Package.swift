@@ -1,4 +1,5 @@
-// swift-tools-version: 5.7
+// swift-tools-version: 5.9
+
 import PackageDescription
 
 let package = Package(
@@ -15,8 +16,8 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/wolfmcnally/swift-collections", .upToNextMajor(from: "1.1.0")),
-        .package(url: "https://github.com/wolfmcnally/WolfBase.git", .upToNextMajor(from: "5.0.0")),
-        .package(url: "https://github.com/blockchaincommons/BCSwiftFloat16.git", .upToNextMajor(from: "0.1.1")),
+        .package(url: "https://github.com/wolfmcnally/WolfBase.git", .upToNextMajor(from: "6.0.0")),
+        .package(url: "https://github.com/blockchaincommons/BCSwiftFloat16.git", .upToNextMajor(from: "1.0.0")),
     ],
     targets: [
         .target(
