@@ -253,18 +253,24 @@ final class CodingTests: XCTestCase {
         XCTAssertThrowsError(try Int(cbor: c))
     }
     
+    func testNegative65BitIntegers() throws {
+        // Integer values in the range 2^64 ... 2^63 – 1 are invalid in dCBOR.
+        
+        // 2^63 – 1
+        XCTAssertThrowsError(try CBOR(‡"3b8000000000000000"))
+        
+        // 2^64
+        XCTAssertThrowsError(try CBOR(‡"3bffffffffffffffff"))
+    }
+    
     func testNonCanonicalFloat1() throws {
         // Non-canonical representation of 1.5 that could be represented at a smaller width.
-        let f = ‡"fb3ff8000000000000"
-        XCTAssertThrowsError(try CBOR(f))
+        XCTAssertThrowsError(try CBOR(‡"fb3ff8000000000000"))
     }
     
     func testNonCanonicalFloat2() throws {
-        // Non-canonical representation of a floating point value that could be represented as an integer.
-        do {
-            let f = ‡"F94A00" // 12.0
-            XCTAssertThrowsError(try CBOR(f))
-        }
+        // Non-canonical representation of a 12.0 value that could be represented as an integer.
+        XCTAssertThrowsError(try CBOR(‡"f94a00"))
     }
     
     let canonicalNaNData = ‡"f97e00"

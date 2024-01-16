@@ -139,11 +139,10 @@ func decodeCBORInternal(_ data: ArraySlice<UInt8>) throws -> (cbor: CBOR, len: I
     case .unsigned:
         return (.unsigned(value), headerVarIntLen)
     case .negative:
-        if value == UInt64.max {
-            return (.negative(Int64.min), headerVarIntLen)
-        } else {
-            return (.negative(-Int64(value) - 1), headerVarIntLen)
+        guard value <= UInt64(Int64.max) else {
+            throw CBORError.outOfRange
         }
+        return (.negative(-Int64(value) - 1), headerVarIntLen)
     case .bytes:
         let dataLen = Int(value)
         let buf = try parseBytes(data.from(headerVarIntLen), len: dataLen)
