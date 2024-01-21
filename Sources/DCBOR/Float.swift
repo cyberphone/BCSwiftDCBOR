@@ -55,7 +55,7 @@ extension Double: CBORCodable {
         guard !isNaN else {
             return cborNaN
         }
-        return self.bitPattern.encodeVarInt(.simple)
+        return self.bitPattern.encodeInt(.simple)
     }
     
     func validateCanonical() throws {
@@ -125,7 +125,7 @@ extension Float: CBORCodable {
         guard !isNaN else {
             return cborNaN
         }
-        return self.bitPattern.encodeVarInt(.simple)
+        return self.bitPattern.encodeInt(.simple)
     }
     
     func validateCanonical() throws {
@@ -191,7 +191,7 @@ extension CBORFloat16: CBORCodable {
         guard !isNaN else {
             return cborNaN
         }
-        return self.bitPattern.encodeVarInt(.simple)
+        return self.bitPattern.encodeInt(.simple)
     }
     
     func validateCanonical() throws {

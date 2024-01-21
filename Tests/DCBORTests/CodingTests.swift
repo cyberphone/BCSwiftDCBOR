@@ -231,8 +231,50 @@ final class CodingTests: XCTestCase {
         
         // Negative zero gets serialized as integer zero.
         runTest(-0.0,               "unsigned(0)",          "0",            "00")
+        
+        // Smallest half-precision subnormal.
+        runTest(5.960464477539063e-08, "simple(5.960464477539063e-08)", "5.960464477539063e-08", "f90001")
+        
+        // Smallest single subnormal.
+        runTest(1.401298464324817e-45, "simple(1.401298464324817e-45)", "1.401298464324817e-45", "fa00000001")
+        
+        // Smallest double subnormal.
+        runTest(5e-324, "simple(5e-324)", "5e-324", "fb0000000000000001")
+
+        // Smallest double normal.
+        runTest(2.2250738585072014e-308, "simple(2.2250738585072014e-308)", "2.2250738585072014e-308", "fb0010000000000000")
+
+        // Smallest half-precision normal.
+        runTest(6.103515625e-05, "simple(6.103515625e-05)", "6.103515625e-05", "f90400")
+
+        // Largest possible half-precision.
+        runTest(65504.0, "unsigned(65504)", "65504", "19ffe0")
+
+        // Exponent 24 to test single exponent boundary.
+        runTest(33554430.0, "unsigned(33554430)", "33554430", "1a01fffffe")
+
+        // Most negative double that converts to int64.
+        runTest(-9223372036854774784.0, "negative(-9223372036854774784)", "-9223372036854774784", "3b7ffffffffffffbff")
+
+        // Largest double that can convert to uint64, almost UINT64_MAX.
+        runTest(18446744073709550000.0, "unsigned(18446744073709549568)", "18446744073709549568", "1bfffffffffffff800")
+
+        // Just too large to convert to uint64, but converts to a single, just over UINT64_MAX.
+        runTest(18446744073709552000.0, "simple(1.8446744073709552e+19)", "1.8446744073709552e+19", "fa5f800000")
+
+        // Large negative that converts to float, but too large for int64.
+        runTest(-18446742974197924000.0, "simple(-1.8446742974197924e+19)", "-1.8446742974197924e+19", "fadf7fffff")
+
+        // Largest possible single.
+        runTest(3.4028234663852886e+38, "simple(3.4028234663852886e+38)", "3.4028234663852886e+38", "fa7f7fffff")
+
+        // Slightly larger than largest possible single.
+        runTest(3.402823466385289e+38, "simple(3.402823466385289e+38)", "3.402823466385289e+38", "fb47efffffe0000001")
+
+        // Largest double.
+        runTest(1.7976931348623157e+308, "simple(1.7976931348623157e+308)", "1.7976931348623157e+308", "fb7fefffffffffffff")
     }
-    
+
     func testIntCoercedToFloat() throws {
         let n = 42
         let c = n.cbor

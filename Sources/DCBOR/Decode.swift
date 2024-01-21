@@ -54,7 +54,8 @@ func parseHeaderVarint(_ data: ArraySlice<UInt8>) throws -> (majorType: MajorTyp
         throw CBORError.underrun
     }
     
-    let (majorType, headerValue) = parseHeader(data.at(0))
+    let header = data.at(0)
+    let (majorType, headerValue) = parseHeader(header)
     let dataRemaining = data.count - 1
     let value: UInt64
     let varIntLen: Int
@@ -78,7 +79,7 @@ func parseHeaderVarint(_ data: ArraySlice<UInt8>) throws -> (majorType: MajorTyp
         value =
             UInt64(data.at(1)) << 8 |
             UInt64(data.at(2))
-        guard value > UInt8.max else {
+        guard value > UInt8.max || header == 0xf9 else {
             throw CBORError.nonCanonicalNumeric
         }
         varIntLen = 3
@@ -91,7 +92,7 @@ func parseHeaderVarint(_ data: ArraySlice<UInt8>) throws -> (majorType: MajorTyp
             UInt64(data.at(2)) << 16 |
             UInt64(data.at(3)) << 8 |
             UInt64(data.at(4))
-        guard value > UInt16.max else {
+        guard value > UInt16.max || header == 0xfa else {
             throw CBORError.nonCanonicalNumeric
         }
         varIntLen = 5
@@ -113,7 +114,7 @@ func parseHeaderVarint(_ data: ArraySlice<UInt8>) throws -> (majorType: MajorTyp
         
         value = valHi | valLo
         
-        guard value > UInt32.max else {
+        guard value > UInt32.max || header == 0xfb else {
             throw CBORError.nonCanonicalNumeric
         }
         varIntLen = 9
