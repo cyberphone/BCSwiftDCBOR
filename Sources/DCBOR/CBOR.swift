@@ -1,5 +1,4 @@
 import Foundation
-import OrderedCollections
 
 /// A symbolic representation of CBOR data.
 public indirect enum CBOR {
