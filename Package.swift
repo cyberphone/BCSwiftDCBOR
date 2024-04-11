@@ -18,7 +18,8 @@ let package = Package(
         .package(url: "https://github.com/wolfmcnally/swift-collections", from: "1.1.0"),
         .package(url: "https://github.com/wolfmcnally/WolfBase", from: "6.0.0"),
         .package(url: "https://github.com/blockchaincommons/BCSwiftFloat16", from: "1.0.0"),
-        .package(url: "https://github.com/BlockchainCommons/BCSwiftTags", from: "0.1.0")
+        .package(url: "https://github.com/BlockchainCommons/BCSwiftTags", from: "0.1.0"),
+        .package(url: "https://github.com/wolfmcnally/swift-numberkit.git", .upToNextMajor(from: "2.4.3")),
     ],
     targets: [
         .target(
@@ -27,6 +28,7 @@ let package = Package(
                 .product(name: "BCFloat16", package: "BCSwiftFloat16"),
                 .product(name: "Collections", package: "swift-collections"),
                 .product(name: "BCTags", package: "BCSwiftTags"),
+                .product(name: "NumberKit", package: "swift-numberkit"),
             ]),
         .testTarget(
             name: "DCBORTests",

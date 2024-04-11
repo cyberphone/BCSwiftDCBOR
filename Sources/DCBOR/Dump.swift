@@ -1,4 +1,5 @@
 import Foundation
+import NumberKit
 
 public extension CBOR {
     /// Returns the encoded hexadecimal representation of this CBOR.
@@ -68,7 +69,7 @@ extension CBOR {
         case .unsigned(let n):
             return [DumpItem(level: level, data: self.cborData, note: "unsigned(\(n))")]
         case .negative(let n):
-            return [DumpItem(level: level, data: self.cborData, note: "negative(\(n))")]
+            return [DumpItem(level: level, data: self.cborData, note: "negative(\(-1 - BigInt(n)))")]
         case .bytes(let d):
             var items = [
                 DumpItem(level: level, data: d.count.encodeVarInt(.bytes), note: "bytes(\(d.count))")

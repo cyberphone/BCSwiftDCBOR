@@ -262,8 +262,8 @@ final class CodingTests: XCTestCase {
         // Just too large to convert to uint64, but converts to a single, just over UINT64_MAX.
         runTest(18446744073709552000.0, "simple(1.8446744073709552e+19)", "1.8446744073709552e+19", "fa5f800000")
 
-        // Large negative that converts to float, but too large for int64.
-        runTest(-18446742974197924000.0, "simple(-1.8446742974197924e+19)", "-1.8446742974197924e+19", "fadf7fffff")
+        // Large negative that converts to negative int.
+        runTest(-18446742974197924000.0, "negative(-18446742974197923840)", "-18446742974197923840", "3bfffffeffffffffff")
 
         // Largest possible single.
         runTest(3.4028234663852886e+38, "simple(3.4028234663852886e+38)", "3.4028234663852886e+38", "fa7f7fffff")
@@ -294,17 +294,7 @@ final class CodingTests: XCTestCase {
         XCTAssertEqual(f, n)
         XCTAssertThrowsError(try Int(cbor: c))
     }
-    
-    func testNegative65BitIntegers() throws {
-        // Integer values in the range 2^64 ... 2^63 – 1 are invalid in dCBOR.
         
-        // 2^63 – 1
-        XCTAssertThrowsError(try CBOR(‡"3b8000000000000000"))
-        
-        // 2^64
-        XCTAssertThrowsError(try CBOR(‡"3bffffffffffffffff"))
-    }
-    
     func testNonCanonicalFloat1() throws {
         // Non-canonical representation of 1.5 that could be represented at a smaller width.
         XCTAssertThrowsError(try CBOR(‡"fb3ff8000000000000"))

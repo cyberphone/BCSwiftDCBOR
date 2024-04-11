@@ -1,4 +1,5 @@
 import Foundation
+import NumberKit
 
 func decodeFixedWidthInteger<T: FixedWidthInteger>(_ cbor: CBOR) throws -> T {
     let result: T
@@ -9,7 +10,8 @@ func decodeFixedWidthInteger<T: FixedWidthInteger>(_ cbor: CBOR) throws -> T {
         }
         result = n
     case .negative(let n):
-        guard let n = T(exactly: n) else {
+        let b = -1 - BigInt(n)
+        guard let n = T(exactly: b) else {
             throw CBORError.outOfRange
         }
         result = n
@@ -92,7 +94,9 @@ extension UInt: CBORCodable {
 extension Int8: CBORCodable {
     public var cbor: CBOR {
         if self < 0 {
-            return .negative(Int64(self))
+            let b = Int16(self)
+            let a = UInt64(-1 - b)
+            return .negative(a)
         } else {
             return .unsigned(UInt64(self))
         }
@@ -101,7 +105,7 @@ extension Int8: CBORCodable {
     public var cborData: Data {
         if self < 0 {
             let b = Int16(self)
-            let a = UInt8(-b - 1)
+            let a = UInt8(-1 - b)
             return a.encodeVarInt(.negative)
         } else {
             let a = UInt8(self)
@@ -117,7 +121,9 @@ extension Int8: CBORCodable {
 extension Int16: CBORCodable {
     public var cbor: CBOR {
         if self < 0 {
-            return .negative(Int64(self))
+            let b = Int32(self)
+            let a = UInt64(-1 - b)
+            return .negative(a)
         } else {
             return .unsigned(UInt64(self))
         }
@@ -126,7 +132,7 @@ extension Int16: CBORCodable {
     public var cborData: Data {
         if self < 0 {
             let b = Int32(self)
-            let a = UInt16(-b - 1)
+            let a = UInt16(-1 - b)
             return a.encodeVarInt(.negative)
         } else {
             let a = UInt16(self)
@@ -142,7 +148,9 @@ extension Int16: CBORCodable {
 extension Int32: CBORCodable {
     public var cbor: CBOR {
         if self < 0 {
-            return .negative(Int64(self))
+            let b = Int64(self)
+            let a = UInt64(-1 - b)
+            return .negative(a)
         } else {
             return .unsigned(UInt64(self))
         }
@@ -167,7 +175,11 @@ extension Int32: CBORCodable {
 extension Int64: CBORCodable {
     public var cbor: CBOR {
         if self < 0 {
-            return .negative(Int64(self))
+            if self == Int64.min {
+                return .negative(UInt64(Int64.max))
+            } else {
+                return .negative(UInt64(-1 - self))
+            }
         } else {
             return .unsigned(UInt64(self))
         }
@@ -195,7 +207,11 @@ extension Int64: CBORCodable {
 extension Int: CBORCodable {
     public var cbor: CBOR {
         if self < 0 {
-            return .negative(Int64(self))
+            if self == Int.min {
+                return .negative(UInt64(Int.max))
+            } else {
+                return .negative(UInt64(-1 - self))
+            }
         } else {
             return .unsigned(UInt64(self))
         }

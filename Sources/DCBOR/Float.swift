@@ -1,4 +1,5 @@
 import Foundation
+import NumberKit
 
 let cborNaN = Data([0xf9, 0x7e, 0x00])
 
@@ -6,9 +7,10 @@ extension Double: CBORCodable {
     public var cbor: CBOR {
         if
             self < 0,
-            let i = Int64(exactly: self)
+            let n = BigInt(exactly: self),
+            let i = UInt64(exactly: -1 - n)
         {
-            return i.cbor
+            return .negative(i)
         }
         if let i = UInt64(exactly: self) {
             return i.cbor
@@ -24,7 +26,8 @@ extension Double: CBORCodable {
             }
             self = f
         case .negative(let n):
-            guard let f = Double(exactly: n) else {
+            let b = -1 - BigInt(n)
+            guard let f = Double(exactly: b) else {
                 throw CBORError.outOfRange
             }
             self = f
@@ -73,9 +76,10 @@ extension Float: CBORCodable {
     public var cbor: CBOR {
         if
             self < 0,
-            let i = Int64(exactly: self)
+            let n = BigInt(exactly: self),
+            let i = UInt64(exactly: -1 - n)
         {
-            return i.cbor
+            return .negative(i)
         }
         if let i = UInt64(exactly: self) {
             return i.cbor
@@ -91,7 +95,8 @@ extension Float: CBORCodable {
             }
             self = f
         case .negative(let n):
-            guard let f = Float(exactly: n) else {
+            let b = -1 - BigInt(n)
+            guard let f = Float(exactly: b) else {
                 throw CBORError.outOfRange
             }
             self = f
@@ -161,7 +166,8 @@ extension CBORFloat16: CBORCodable {
             }
             self = f
         case .negative(let n):
-            guard let f = CBORFloat16(exactly: n) else {
+            let b = -1 - BigInt(n)
+            guard let f = CBORFloat16(exactly: b) else {
                 throw CBORError.outOfRange
             }
             self = f

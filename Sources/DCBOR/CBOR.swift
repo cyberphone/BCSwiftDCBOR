@@ -1,11 +1,14 @@
 import Foundation
+import NumberKit
 
 /// A symbolic representation of CBOR data.
 public indirect enum CBOR {
     /// Unsigned integer (major type 0).
     case unsigned(UInt64)
     /// Negative integer (major type 1).
-    case negative(Int64)
+    ///
+    /// value = (-n) - 1
+    case negative(UInt64)
     /// Byte string (major type 2).
     case bytes(Data)
     /// UTF-8 string (major type 3).
@@ -44,8 +47,7 @@ extension CBOR: CBOREncodable {
         case .unsigned(let x):
             return x.cborData
         case .negative(let x):
-            precondition(x < 0)
-            return x.cborData
+            return x.encodeVarInt(.negative)
         case .bytes(let x):
             return x.cborData
         case .text(let x):
@@ -92,7 +94,7 @@ extension CBOR: CustomStringConvertible {
         case .unsigned(let x):
             return x.description
         case .negative(let x):
-            return x.description
+            return (-BigInt(x) - 1).description
         case .bytes(let x):
             return x.hex.flanked("h'", "'")
         case .text(let x):
@@ -115,7 +117,7 @@ extension CBOR: CustomDebugStringConvertible {
         case .unsigned(let x):
             return "unsigned(\(x))"
         case .negative(let x):
-            return "negative(\(x))"
+            return "negative(\(-1 - BigInt(x)))"
         case .bytes(let x):
             return "bytes(\(x.hex))"
         case .text(let x):

@@ -5,6 +5,9 @@ import Foundation
 /// Typically types that conform to this protocol will provide the `cborTag`
 /// static attribute and the `init(untaggedCBOR:)` constructor.
 public protocol CBORTaggedDecodable: CBORDecodable {
+    /// The CBOR tags assocated with this type. If more than one tag is present,
+    /// they are considered equivalent for reading, but only the first one is
+    /// used for writing.
     static var cborTags: [Tag] { get }
     init(untaggedCBOR: CBOR) throws
     
