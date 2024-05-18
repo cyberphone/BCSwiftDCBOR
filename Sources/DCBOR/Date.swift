@@ -5,7 +5,11 @@ extension Date: CBORTaggedCodable {
     public static let cborTags: [Tag] = [1, 100]
     
     public var untaggedCBOR: CBOR {
-        CBOR(timeIntervalSince1970)
+        // AR: Ugly fix
+        if Int64(exactly: timeIntervalSince1970) != nil {
+            return CBOR(Int64(timeIntervalSince1970))
+        }
+        return CBOR(timeIntervalSince1970)
     }
     
     public init(untaggedCBOR: CBOR) throws {

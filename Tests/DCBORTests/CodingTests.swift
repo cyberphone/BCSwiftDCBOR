@@ -14,7 +14,7 @@ final class CodingTests: XCTestCase {
         let decodedT = try! T(cbor: cbor)
         XCTAssertEqual(t, decodedT)
     }
-
+    
     func testUnsigned() throws {
         runTest(UInt8 (0), "unsigned(0)", "0", "00")
         runTest(UInt16(0), "unsigned(0)", "0", "00")
@@ -217,7 +217,7 @@ final class CodingTests: XCTestCase {
         let decodedCBOR = try! CBOR(bytes)
         XCTAssertEqual(envelope, decodedCBOR)
     }
-    
+
     func testFloat() throws {
         // Floating point numbers get serialized as their shortest accurate representation.
         runTest(1.5,                "simple(1.5)",          "1.5",          "f93e00")
@@ -225,12 +225,15 @@ final class CodingTests: XCTestCase {
         runTest(1.2,                "simple(1.2)",          "1.2",          "fb3ff3333333333333")
 
         // Floating point values that can be represented as integers get serialized as integers.
-        runTest(Float(42.0),        "unsigned(42)",         "42",           "182a")
-        runTest(2345678.0,          "unsigned(2345678)",    "2345678",      "1a0023cace")
-        runTest(-2345678.0,         "negative(-2345678)",   "-2345678",     "3a0023cacd")
+        // AR: CDE
+        runTest(Float(42.0),        "simple(42.0)",         "42.0",         "f95140")
+        runTest(2345678.0,          "simple(2345678.0)",    "2345678.0",    "fa4a0f2b38")
+        runTest(-2345678.0,         "simple(-2345678.0)",   "-2345678.0",   "faca0f2b38")
         
         // Negative zero gets serialized as integer zero.
-        runTest(-0.0,               "unsigned(0)",          "0",            "00")
+        // AR: CDE
+        runTest(0.0,                "simple(0.0)",          "0.0",          "f90000")
+        runTest(-0.0,               "simple(-0.0)",         "-0.0",         "f98000")
         
         // Smallest half-precision subnormal.
         runTest(5.960464477539063e-08, "simple(5.960464477539063e-08)", "5.960464477539063e-08", "f90001")
@@ -248,11 +251,17 @@ final class CodingTests: XCTestCase {
         runTest(6.103515625e-05, "simple(6.103515625e-05)", "6.103515625e-05", "f90400")
 
         // Largest possible half-precision.
-        runTest(65504.0, "unsigned(65504)", "65504", "19ffe0")
+        // AR: CDE
+        runTest(65504.0, "simple(65504.0)", "65504.0", "f97bff")
 
         // Exponent 24 to test single exponent boundary.
-        runTest(33554430.0, "unsigned(33554430)", "33554430", "1a01fffffe")
+        // AR: CDE
+        runTest(33554430.0, "simple(33554430.0)", "33554430.0", "fa4bffffff")
 
+        // Largest Double that also could be expressed as an integer.
+        // AR: CDE
+        runTest(9223372036854775000.0, "simple(9.223372036854775e+18)", "9.223372036854775e+18", "fb43dfffffffffffff")
+/*
         // Most negative double that converts to int64.
         runTest(-9223372036854774784.0, "negative(-9223372036854774784)", "-9223372036854774784", "3b7ffffffffffffbff")
 
@@ -264,7 +273,7 @@ final class CodingTests: XCTestCase {
 
         // Large negative that converts to negative int.
         runTest(-18446742974197924000.0, "negative(-18446742974197923840)", "-18446742974197923840", "3bfffffeffffffffff")
-
+*/
         // Largest possible single.
         runTest(3.4028234663852886e+38, "simple(3.4028234663852886e+38)", "3.4028234663852886e+38", "fa7f7fffff")
 
@@ -275,6 +284,8 @@ final class CodingTests: XCTestCase {
         runTest(1.7976931348623157e+308, "simple(1.7976931348623157e+308)", "1.7976931348623157e+308", "fb7fefffffffffffff")
     }
 
+    /*
+    // AR: CDE
     func testIntCoercedToFloat() throws {
         let n = 42
         let c = n.cbor
@@ -285,6 +296,7 @@ final class CodingTests: XCTestCase {
         let i = try Int(cbor: c2)
         XCTAssertEqual(i, n)
     }
+     */
     
     func testFailFloatCoercedToInt() throws {
         // Floating point values cannot be coerced to integer types.
@@ -299,12 +311,14 @@ final class CodingTests: XCTestCase {
         // Non-canonical representation of 1.5 that could be represented at a smaller width.
         XCTAssertThrowsError(try CBOR(‡"fb3ff8000000000000"))
     }
-    
+    /*
+    // AR: CDE
     func testNonCanonicalFloat2() throws {
         // Non-canonical representation of a 12.0 value that could be represented as an integer.
         XCTAssertThrowsError(try CBOR(‡"f94a00"))
     }
-    
+    */
+
     let canonicalNaNData = ‡"f97e00"
     let canonicalInfinityData = ‡"f97c00"
     let canonicalNegativeInfinityData = ‡"f9fc00"
@@ -354,4 +368,5 @@ final class CodingTests: XCTestCase {
         XCTAssertThrowsError(try CBOR(‡"faff800000"))
         XCTAssertThrowsError(try CBOR(‡"fbfff0000000000000"))
     }
+
 }
