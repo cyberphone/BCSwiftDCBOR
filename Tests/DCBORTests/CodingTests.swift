@@ -220,13 +220,13 @@ final class CodingTests: XCTestCase {
     
     func testTransforms() {
         var map = Map()
-        map.insert(2, "Hi there!")
+        map.insert(2.0, "Hi there!")
         map.insert(1, [10.5,-2.0])
         runTest(map,
-                #"map({0x01: (unsigned(1), array([simple(10.5), simple(-2.0)])), 0x02: (unsigned(2), text("Hi there!"))})"#,
-                #"{1: [10.5, -2.0], 2: "Hi there!"}"#,
-                "a20182f94940f9c0000269486920746865726521")
-        let _ = map.remove(2)
+                #"map({0x01: (unsigned(1), array([simple(10.5), simple(-2.0)])), 0xf94000: (simple(2.0), text("Hi there!"))})"#,
+                #"{1: [10.5, -2.0], 2.0: "Hi there!"}"#,
+                "a20182f94940f9c000f9400069486920746865726521")
+        let _ = map.remove(2.0)
         runTest(map,
                 #"map({0x01: (unsigned(1), array([simple(10.5), simple(-2.0)]))})"#,
                 #"{1: [10.5, -2.0]}"#,
