@@ -217,6 +217,22 @@ final class CodingTests: XCTestCase {
         let decodedCBOR = try! CBOR(bytes)
         XCTAssertEqual(envelope, decodedCBOR)
     }
+    
+    func testTransforms() {
+        var map = Map()
+        map.insert(2, "Hi there!")
+        map.insert(1, [10.5,-2.0])
+        runTest(map,
+                #"map({0x01: (unsigned(1), array([simple(10.5), simple(-2.0)])), 0x02: (unsigned(2), text("Hi there!"))})"#,
+                #"{1: [10.5, -2.0], 2: "Hi there!"}"#,
+                "a20182f94940f9c0000269486920746865726521")
+        let _ = map.remove(2)
+        runTest(map,
+                #"map({0x01: (unsigned(1), array([simple(10.5), simple(-2.0)]))})"#,
+                #"{1: [10.5, -2.0]}"#,
+                "a10182f94940f9c000")
+
+    }
 
     func testFloat() throws {
         // Floating point numbers get serialized as their shortest accurate representation.
